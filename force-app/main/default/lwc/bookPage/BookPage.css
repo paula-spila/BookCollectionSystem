@@ -1,0 +1,29 @@
+.full-height {
+  height: 100vh;
+}
+
+.filter-panel {
+  background-color: #e0e0e0;
+}
+
+.table-card {
+  width: 100%;
+  height: 100%;
+}
+
+.book-table {
+  width: 100%;
+  height: 80vh;
+}
+
+.button-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.button-spacing {
+  margin-bottom: 10px;
+  width: 100%;
+}

@@ -1,4 +1,44 @@
 <template>
-  <p>Hi this is the book page now</p>
+  <lightning-card>
+    <div class="slds-p-around_medium">
+      <div class="slds-grid slds-gutters slds-wrap full-height">
+        <!-- Filter Panel -->
+        <div class="slds-col slds-size_2-of-12 filter-panel">
+          <h2 class="slds-text-heading_small slds-p-around_medium">FILTRI</h2>
+          <!-- Placeholder for filters (to be implemented as needed) -->
+        </div>
 
+        <!-- Table Section -->
+        <div class="slds-col slds-size_8-of-12 slds-p-around_medium">
+          <lightning-card class="table-card">
+            <lightning-datatable key-field="Id"
+                                 data={books}
+                                 columns={columns}
+                                 hide-checkbox-column
+                                 class="book-table"
+                                 resize-column-disabled="true">
+            </lightning-datatable>
+          </lightning-card>
+        </div>
+
+        <!-- Button Panel -->
+        <div class="slds-col slds-size_2-of-12 button-panel slds-p-around_medium">
+          <lightning-button label="Pievienot grāmatu"
+                            class="button-spacing"
+                            onclick={handleOpenModal}></lightning-button>
+          <lightning-button label="Pievienot autoru"
+                            class="button-spacing"></lightning-button>
+          <lightning-button label="Pievienot vērtējumu"
+                            class="button-spacing"></lightning-button>
+          <lightning-button label="Aizdot grāmatu"
+                            class="button-spacing"></lightning-button>
+        </div>
+      </div>
+    </div>
+  </lightning-card>
+
+  <!-- Include the modal component for adding books -->
+  <c-book-addition-form is-open={isModalOpen}
+                        onbookadded={handleBookAdded}>
+  </c-book-addition-form>
 </template>
