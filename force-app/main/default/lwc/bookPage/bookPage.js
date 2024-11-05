@@ -1,9 +1,9 @@
 import { LightningElement, track } from 'lwc';
 import getBooks from '@salesforce/apex/BookController.getBooks';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class BookPage extends LightningElement {
   @track books = [];
-  @track isModalOpen = false;
   @track columns = [
     { label: 'Grāmata', fieldName: 'Name' },
     { label: 'Autors', fieldName: 'AuthorName' },
@@ -11,6 +11,9 @@ export default class BookPage extends LightningElement {
     { label: 'Žanrs', fieldName: 'GenreName' },
     { label: 'Pievienošanas datums', fieldName: 'DateAdded', type: 'date' }
   ];
+
+  @track isBookModalOpen = false;
+  @track isAuthorModalOpen = false;
 
   connectedCallback() {
     this.loadBooks();
@@ -35,15 +38,41 @@ export default class BookPage extends LightningElement {
       });
   }
 
-  handleOpenModal() {
-    const modal = this.template.querySelector('c-book-addition-form');
-    if (modal) {
-      modal.openModal();
+  handleOpenBookModal() {
+    const bookModal = this.template.querySelector('c-book-addition-form');
+    if (bookModal) {
+      bookModal.openModal();
+    }
+  }
+
+  handleOpenAuthorModal() {
+    const authorModal = this.template.querySelector('c-add-author-form');
+    if (authorModal) {
+      authorModal.openModal();
     }
   }
 
   handleBookAdded() {
     this.isModalOpen = false;
     this.loadBooks();
+    this.dispatchEvent(
+      new ShowToastEvent({
+        title: 'Success',
+        message: 'Book has been added successfully',
+        variant: 'success',
+      })
+    );
   }
+
+  handleAuthorAdded() {
+    this.isAuthorModalOpen = false;
+    this.dispatchEvent(
+      new ShowToastEvent({
+        title: 'Success',
+        message: 'Author has been added successfully',
+        variant: 'success',
+      })
+    );
+  }
+
 }

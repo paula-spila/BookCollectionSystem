@@ -25,9 +25,10 @@
         <div class="slds-col slds-size_2-of-12 button-panel slds-p-around_medium">
           <lightning-button label="Pievienot grāmatu"
                             class="button-spacing"
-                            onclick={handleOpenModal}></lightning-button>
+                            onclick={handleOpenBookModal}></lightning-button>
           <lightning-button label="Pievienot autoru"
-                            class="button-spacing"></lightning-button>
+                            class="button-spacing"
+                            onclick={handleOpenAuthorModal}></lightning-button>
           <lightning-button label="Pievienot vērtējumu"
                             class="button-spacing"></lightning-button>
           <lightning-button label="Aizdot grāmatu"
@@ -38,7 +39,12 @@
   </lightning-card>
 
   <!-- Include the modal component for adding books -->
-  <c-book-addition-form is-open={isModalOpen}
+  <c-book-addition-form is-open={isBookModalOpen}
                         onbookadded={handleBookAdded}>
   </c-book-addition-form>
+
+  <!-- Include the modal component for adding authors -->
+  <c-add-author-form is-open={isAuthorModalOpen}
+                     onauthoradded={handleAuthorAdded}>
+  </c-add-author-form>
 </template>
