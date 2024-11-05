@@ -172,4 +172,29 @@ public with sharing class BookControllerTest {
         System.assertNotEquals(null, createdBook, 'Book should have been created.');
         System.assertEquals('Test Book', createdBook.Name, 'Book name should match.');
     }
+    
+    @isTest
+    static void testGetBookOptions() {
+        List<Book__c> testBooks = new List<Book__c>();
+        testBooks.add(new Book__c(Name = 'Test Book A'));
+        testBooks.add(new Book__c(Name = 'Test Book B'));
+        testBooks.add(new Book__c(Name = 'Test Book C'));
+        insert testBooks;
+
+        Test.startTest();
+        List<Map<String, String>> options = BookController.getBookOptions();
+        Test.stopTest();
+
+        System.assertNotEquals(null, options, 'The result should not be null.');
+        System.assertEquals(3, options.size(), 'The number of options should match the number of books.');
+
+        Set<String> expectedLabels = new Set<String>{'Test Book A', 'Test Book B', 'Test Book C'};
+        Set<String> returnedLabels = new Set<String>();
+        for (Map<String, String> option : options) {
+            returnedLabels.add(option.get('label'));
+            System.assertNotEquals(null, option.get('value'), 'Each option should have a value.');
+        }
+
+        System.assertEquals(expectedLabels, returnedLabels, 'The labels should match the book names.');
+    }
 }

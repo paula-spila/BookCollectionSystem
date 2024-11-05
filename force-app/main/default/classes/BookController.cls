@@ -18,6 +18,21 @@ public with sharing class BookController {
     }
 
     @AuraEnabled
+    public static List<Map<String, String>> getBookOptions() {
+        List<Map<String, String>> options = new List<Map<String, String>>();
+        List<Book__c> books = [SELECT Id, Name FROM Book__c ORDER BY Name];
+
+        for (Book__c book : books) {
+            Map<String, String> option = new Map<String, String>();
+            option.put('label', book.Name);
+            option.put('value', book.Id);
+            options.add(option);
+        }
+
+        return options;
+    }
+
+    @AuraEnabled
     public static Id addBook(
         String name,
         Date publicationDate,
