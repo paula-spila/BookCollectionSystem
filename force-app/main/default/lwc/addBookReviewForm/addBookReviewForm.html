@@ -1,0 +1,71 @@
+<template>
+  <template if:true={isOpen}>
+    <section role="dialog"
+             tabindex="-1"
+             class="slds-modal slds-fade-in-open">
+      <div class="slds-modal__container">
+        <header class="slds-modal__header">
+          <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                  title="Close"
+                  onclick={handleClose}>
+            <lightning-icon icon-name="utility:close"
+                            alternative-text="Close"
+                            size="small"></lightning-icon>
+          </button>
+          <h2 class="slds-text-heading_medium">Pievienot jaunu vērtējumu</h2>
+        </header>
+
+        <div class="slds-modal__content slds-p-around_medium">
+          <!-- Book Lookup -->
+          <lightning-combobox label="Grāmata"
+                              placeholder="Izvēlēties grāmatu"
+                              options={bookOptions}
+                              value={book}
+                              required
+                              onchange={handleBookChange}>
+          </lightning-combobox>
+
+          <!-- Book Review Name -->
+          <lightning-input label="Vērtējuma nosaukums"
+                           value={reviewName}
+                           required
+                           onchange={handleInputChange}
+                           data-id="reviewName"></lightning-input>
+
+          <!-- Date of Review -->
+          <lightning-input label="Vērtējuma datums"
+                           type="date"
+                           value={dateOfReview}
+                           onchange={handleInputChange}
+                           data-id="dateOfReview"></lightning-input>
+
+          <!-- Rating -->
+          <lightning-input label="Novērtējums"
+                           type="number"
+                           value={rating}
+                           min="0"
+                           max="10"
+                           onchange={handleInputChange}
+                           data-id="rating"></lightning-input>
+
+          <!-- Review Text -->
+          <lightning-textarea label="Atsauksmes teksts"
+                              value={reviewText}
+                              onchange={handleInputChange}
+                              data-id="reviewText"></lightning-textarea>
+        </div>
+
+        <footer class="slds-modal__footer">
+          <lightning-button variant="neutral"
+                            label="Atcelt"
+                            onclick={handleClose}></lightning-button>
+          <lightning-button variant="brand"
+                            label="Saglabāt vērtējumu"
+                            onclick={handleSave}></lightning-button>
+        </footer>
+      </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </template>
+
+</template>

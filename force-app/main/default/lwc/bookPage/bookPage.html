@@ -30,7 +30,8 @@
                             class="button-spacing"
                             onclick={handleOpenAuthorModal}></lightning-button>
           <lightning-button label="Pievienot vērtējumu"
-                            class="button-spacing"></lightning-button>
+                            class="button-spacing"
+                            onclick={handleOpenReviewModal}></lightning-button>
           <lightning-button label="Aizdot grāmatu"
                             class="button-spacing"></lightning-button>
         </div>
@@ -38,13 +39,15 @@
     </div>
   </lightning-card>
 
-  <!-- Include the modal component for adding books -->
   <c-add-book-form is-open={isBookModalOpen}
                    onbookadded={handleBookAdded}>
   </c-add-book-form>
 
-  <!-- Include the modal component for adding authors -->
   <c-add-author-form is-open={isAuthorModalOpen}
                      onauthoradded={handleAuthorAdded}>
   </c-add-author-form>
+
+  <c-add-book-review-form is-open={isReviewModalOpen}
+                          onreviewadded={handleReviewAdded}>
+  </c-add-book-review-form>
 </template>

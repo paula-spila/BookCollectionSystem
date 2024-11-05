@@ -1,6 +1,6 @@
 import { LightningElement, track } from 'lwc';
-import getBooks from '@salesforce/apex/BookController.getBooks';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import getBooks from '@salesforce/apex/BookController.getBooks';
 
 export default class BookPage extends LightningElement {
   @track books = [];
@@ -14,6 +14,7 @@ export default class BookPage extends LightningElement {
 
   @track isBookModalOpen = false;
   @track isAuthorModalOpen = false;
+  @track isReviewModalOpen = false;
 
   connectedCallback() {
     this.loadBooks();
@@ -52,25 +53,35 @@ export default class BookPage extends LightningElement {
     }
   }
 
+  handleOpenReviewModal() {
+    const reviewModal = this.template.querySelector('c-add-book-review-form');
+    if (reviewModal) {
+      reviewModal.openModal();
+    }
+  }
+
   handleBookAdded() {
-    this.isModalOpen = false;
+    this.isBookModalOpen = false;
     this.loadBooks();
-    this.dispatchEvent(
-      new ShowToastEvent({
-        title: 'Success',
-        message: 'Book has been added successfully',
-        variant: 'success',
-      })
-    );
+    this.showToast('Success', 'Book has been added successfully', 'success');
   }
 
   handleAuthorAdded() {
     this.isAuthorModalOpen = false;
+    this.showToast('Success', 'Author has been added successfully', 'success');
+  }
+
+  handleReviewAdded() {
+    this.isReviewModalOpen = false;
+    this.showToast('Success', 'Review has been added successfully', 'success');
+  }
+
+  showToast(title, message, variant) {
     this.dispatchEvent(
       new ShowToastEvent({
-        title: 'Success',
-        message: 'Author has been added successfully',
-        variant: 'success',
+        title: title,
+        message: message,
+        variant: variant,
       })
     );
   }
