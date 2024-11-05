@@ -1,6 +1,6 @@
 public with sharing class AuthorController {
     @AuraEnabled
-    public static Id createAuthor(String name, String surname, String description, String region) {
+    public static Id addAuthor(String name, String surname, String description, String region) {
         if (String.isBlank(name)) {
             throw new AuraHandledException('Missing required field: Author Name.');
         }

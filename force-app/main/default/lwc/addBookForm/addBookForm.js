@@ -4,7 +4,7 @@ import addBook from '@salesforce/apex/BookController.addBook';
 import getAuthors from '@salesforce/apex/BookController.getAuthors';
 import getGenres from '@salesforce/apex/BookController.getGenres';
 
-export default class BookAdditionForm extends LightningElement {
+export default class AddBookForm extends LightningElement {
   @track bookName = '';
   @track publicationDate = '';
   @track numberOfPages = '';

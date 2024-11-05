@@ -2,25 +2,25 @@
 private class AuthorControllerTest {
     
     @isTest
-    static void testCreateAuthorSuccess() {
+    static void testAddAuthorSuccess() {
         Test.startTest();
-        Id authorId = AuthorController.createAuthor('John', 'Doe', 'A brief description', 'North America');
+        Id authorId = AuthorController.addAuthor('John', 'Doe', 'A brief description', 'North America');
         Test.stopTest();
         
-        Author__c createdAuthor = [SELECT Id, Name, Surname__c, Description__c, Region__c FROM Author__c WHERE Id = :authorId];
-        System.assertNotEquals(null, createdAuthor, 'Author should be created successfully.');
-        System.assertEquals('John', createdAuthor.Name, 'Author name should match.');
-        System.assertEquals('Doe', createdAuthor.Surname__c, 'Author surname should match.');
-        System.assertEquals('A brief description', createdAuthor.Description__c, 'Description should match.');
-        System.assertEquals('North America', createdAuthor.Region__c, 'Region should match.');
+        Author__c addededAuthor = [SELECT Id, Name, Surname__c, Description__c, Region__c FROM Author__c WHERE Id = :authorId];
+        System.assertNotEquals(null, addededAuthor, 'Author should be added successfully.');
+        System.assertEquals('John', addededAuthor.Name, 'Author name should match.');
+        System.assertEquals('Doe', addededAuthor.Surname__c, 'Author surname should match.');
+        System.assertEquals('A brief description', addededAuthor.Description__c, 'Description should match.');
+        System.assertEquals('North America', addededAuthor.Region__c, 'Region should match.');
     }
 
     @isTest
-    static void testCreateAuthorMissingName() {
+    static void testAddAuthorMissingName() {
         Boolean exceptionThrown = false;
         Test.startTest();
         try {
-            AuthorController.createAuthor('', 'Doe', 'Description', 'North America');
+            AuthorController.addAuthor('', 'Doe', 'Description', 'North America');
         } catch (AuraHandledException e) {
             exceptionThrown = true;
         }
@@ -29,12 +29,12 @@ private class AuthorControllerTest {
     }
 
     @isTest
-    static void testCreateAuthorLongDescription() {
+    static void testAddAuthorLongDescription() {
         Boolean exceptionThrown = false;
         String longDescription = String.join(new List<String>(3006), 'a');
         Test.startTest();
         try {
-            AuthorController.createAuthor('John', 'Doe', longDescription, 'North America');
+            AuthorController.addAuthor('John', 'Doe', longDescription, 'North America');
         } catch (AuraHandledException e) {
             exceptionThrown = true;
         }
