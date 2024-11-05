@@ -39,7 +39,7 @@ export default class BookPage extends LightningElement {
   }
 
   handleOpenBookModal() {
-    const bookModal = this.template.querySelector('c-book-addition-form');
+    const bookModal = this.template.querySelector('c-add-book-form');
     if (bookModal) {
       bookModal.openModal();
     }

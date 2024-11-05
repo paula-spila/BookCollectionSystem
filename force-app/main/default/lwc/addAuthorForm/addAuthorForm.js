@@ -1,5 +1,5 @@
 import { LightningElement, track, api } from 'lwc';
-import createAuthor from '@salesforce/apex/AuthorController.createAuthor';
+import addAuthor from '@salesforce/apex/AuthorController.addAuthor';
 import getRegionOptions from '@salesforce/apex/AuthorController.getRegionOptions';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
@@ -58,7 +58,7 @@ export default class AddAuthorForm extends LightningElement {
         return;
       }
 
-      createAuthor({
+      addAuthor({
         name: this.authorName,
         surname: this.surname || null,
         description: this.description || null,

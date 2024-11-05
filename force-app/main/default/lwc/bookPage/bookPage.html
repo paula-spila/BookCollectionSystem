@@ -39,9 +39,9 @@
   </lightning-card>
 
   <!-- Include the modal component for adding books -->
-  <c-book-addition-form is-open={isBookModalOpen}
-                        onbookadded={handleBookAdded}>
-  </c-book-addition-form>
+  <c-add-book-form is-open={isBookModalOpen}
+                   onbookadded={handleBookAdded}>
+  </c-add-book-form>
 
   <!-- Include the modal component for adding authors -->
   <c-add-author-form is-open={isAuthorModalOpen}
