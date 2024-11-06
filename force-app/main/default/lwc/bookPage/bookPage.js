@@ -15,6 +15,7 @@ export default class BookPage extends LightningElement {
   @track isBookModalOpen = false;
   @track isAuthorModalOpen = false;
   @track isReviewModalOpen = false;
+  @track isLendingModalOpen = false;
 
   connectedCallback() {
     this.loadBooks();
@@ -60,6 +61,13 @@ export default class BookPage extends LightningElement {
     }
   }
 
+  handleOpenLendingModal() {
+    const lendingModal = this.template.querySelector('c-add-lending-form');
+    if (lendingModal) {
+      lendingModal.openModal();
+    }
+  }
+
   handleBookAdded() {
     this.isBookModalOpen = false;
     this.loadBooks();
@@ -74,6 +82,11 @@ export default class BookPage extends LightningElement {
   handleReviewAdded() {
     this.isReviewModalOpen = false;
     this.showToast('Success', 'Review has been added successfully', 'success');
+  }
+
+  handleLendingAdded() {
+    this.isLendingModalOpen = false;
+    this.showToast('Success', 'Lending has been added successfully', 'success');
   }
 
   showToast(title, message, variant) {

@@ -33,7 +33,8 @@
                             class="button-spacing"
                             onclick={handleOpenReviewModal}></lightning-button>
           <lightning-button label="Aizdot grāmatu"
-                            class="button-spacing"></lightning-button>
+                            class="button-spacing"
+                            onclick={handleOpenLendingModal}></lightning-button>
         </div>
       </div>
     </div>
@@ -50,4 +51,8 @@
   <c-add-book-review-form is-open={isReviewModalOpen}
                           onreviewadded={handleReviewAdded}>
   </c-add-book-review-form>
+
+  <c-add-lending-form is-open={isLendingModalOpen}
+                      onlendingadded={handleLendingAdded}>
+  </c-add-lending-form>
 </template>
