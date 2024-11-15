@@ -1,12 +1,4 @@
 public with sharing class BookController {
-    @AuraEnabled(cacheable=true)
-    public static List<Book__c> getBooks() {
-        return [
-            SELECT Id, Name, Author__r.Name, Genre__r.Name, Date_added__c, Number_of_pages__c
-            FROM Book__c
-        ];
-    }   
-
     @AuraEnabled
     public static List<Author__c> getAuthors() {
         return [SELECT Id, Name FROM Author__c];
@@ -33,15 +25,43 @@ public with sharing class BookController {
     }
 
     @AuraEnabled
+    public static List<Book__c> getBooks(String title, String author, String genre) {
+        String titleFilter = '%' + title + '%';
+        String authorFilter = '%' + author + '%';
+        String genreFilter = '%' + genre + '%';
+
+        String query = 'SELECT Id, Name, Author__r.Name, Number_of_pages__c, Genre__r.Name FROM Book__c ';
+
+        Boolean hasFilter = !String.isBlank(title) || !String.isBlank(author) || !String.isBlank(genre);
+
+        if (hasFilter) {
+            query += 'WHERE ';
+            List<String> conditions = new List<String>();
+            
+            if (!String.isBlank(title)) {
+                conditions.add('Name LIKE :titleFilter');
+            }
+            if (!String.isBlank(author)) {
+                conditions.add('Author__r.Name LIKE :authorFilter');
+            }
+            if (!String.isBlank(genre)) {
+                conditions.add('Genre__r.Name LIKE :genreFilter');
+            }
+
+            query += String.join(conditions, ' AND ');
+        }
+
+        return Database.query(query);
+    }
+
+    @AuraEnabled
     public static Id addBook(
         String name,
         Date publicationDate,
         Integer numberOfPages,
         String description,
-        Date dateAdded,
         Id authorId,
-        Id genreId,
-        String isbn
+        Id genreId
     ) {
         // Validate required fields
         if (String.isBlank(name)) {
@@ -58,9 +78,6 @@ public with sharing class BookController {
             throw new AuraHandledException('Number of pages must be a positive integer.');
         }
 
-        if (dateAdded != null && dateAdded > Date.today()) {
-            throw new AuraHandledException('Added date cannot be in the future.');
-        }
         // Validate description length
         if (!String.isBlank(description) && description.length() > 3000) {
             throw new AuraHandledException('Description should not exceed 3000 characters.');
@@ -72,10 +89,8 @@ public with sharing class BookController {
             Publication_Date__c = publicationDate,
             Number_of_Pages__c = numberOfPages,
             Description__c = description,
-            Date_Added__c = dateAdded,
             Author__c = authorId,
-            Genre__c = genreId,
-            ISBN__c = isbn
+            Genre__c = genreId
         );
 
         try {

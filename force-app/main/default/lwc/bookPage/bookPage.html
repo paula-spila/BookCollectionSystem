@@ -4,8 +4,12 @@
       <div class="slds-grid slds-gutters slds-wrap full-height">
         <!-- Filter Panel -->
         <div class="slds-col slds-size_2-of-12 filter-panel">
-          <h2 class="slds-text-heading_small slds-p-around_medium">FILTRI</h2>
-          <!-- Placeholder for filters (to be implemented as needed) -->
+          <c-filters-component filters={filters}
+                               genre-options={genreOptions}
+                               author-options={authorOptions}
+                               onfilterchange={handleFilterChange}
+                               onclearfilters={handleClearFilters}>
+          </c-filters-component>
         </div>
 
         <!-- Table Section -->
