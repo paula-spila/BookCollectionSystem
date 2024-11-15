@@ -1,14 +1,14 @@
 import { LightningElement, track, api } from 'lwc';
 import createLending from '@salesforce/apex/LendingHistoryController.createLending';
-import getBookOptions from '@salesforce/apex/BookController.getBookOptions';
+//import getBookOptions from '@salesforce/apex/BookController.getBookOptions';
 import getReturnStatusOptions from '@salesforce/apex/LendingHistoryController.getReturnStatusOptions';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class AddLendingForm extends LightningElement {
 
-  @track bookOptions = [];
+  // @track bookOptions = [];
   @track returnStatusOptions = [];
-  @track book = '';
+  // @track book = '';
   @track lendingHistoryName = '';
   @track lendingDate = new Date().toISOString().split('T')[0];
   @track returnDate = '';
@@ -16,7 +16,7 @@ export default class AddLendingForm extends LightningElement {
   @api isOpen = false;
 
   connectedCallback() {
-    this.loadBookOptions();
+    // this.loadBookOptions();
     this.loadReturnStatusOptions();
   }
 
@@ -35,26 +35,26 @@ export default class AddLendingForm extends LightningElement {
     this[field] = event.target.value;
   }
 
-  handleBookChange(event) {
-    this.book = event.detail.value;
-  }
+  // handleBookChange(event) {
+  //   this.book = event.detail.value;
+  // }
 
   handleReturnStatusChange(event) {
     this.returnStatus = event.detail.value;
   }
 
-  loadBookOptions() {
-    getBookOptions()
-      .then(result => {
-        this.bookOptions = result.map(option => ({
-          label: option.label,
-          value: option.value
-        }));
-      })
-      .catch(error => {
-        this.showError('Error loading books: ' + (error.body ? error.body.message : error.message));
-      });
-  }
+  // loadBookOptions() {
+  //   getBookOptions()
+  //     .then(result => {
+  //       this.bookOptions = result.map(option => ({
+  //         label: option.label,
+  //         value: option.value
+  //       }));
+  //     })
+  //     .catch(error => {
+  //       this.showError('Error loading books: ' + (error.body ? error.body.message : error.message));
+  //     });
+  // }
 
   loadReturnStatusOptions() {
     getReturnStatusOptions()
@@ -76,7 +76,7 @@ export default class AddLendingForm extends LightningElement {
     }
 
     createLending({
-      bookId: this.book,
+      // bookId: this.book,
       lendingHistoryName: this.lendingHistoryName,
       lendingDate: this.lendingDate || null,
       returnDate: this.returnDate || null,

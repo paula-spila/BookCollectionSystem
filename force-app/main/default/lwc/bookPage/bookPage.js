@@ -8,8 +8,7 @@ export default class BookPage extends LightningElement {
     { label: 'Grāmata', fieldName: 'Name' },
     { label: 'Autors', fieldName: 'AuthorName' },
     { label: 'Lappušu skaits', fieldName: 'NumberOfPages', type: 'number' },
-    { label: 'Žanrs', fieldName: 'GenreName' },
-    { label: 'Pievienošanas datums', fieldName: 'DateAdded', type: 'date' }
+    { label: 'Žanrs', fieldName: 'GenreName' }
   ];
 
   @track isBookModalOpen = false;
@@ -17,27 +16,43 @@ export default class BookPage extends LightningElement {
   @track isReviewModalOpen = false;
   @track isLendingModalOpen = false;
 
+  @track filters = {
+    search: '',
+    genre: '',
+    author: '',
+  };
+
   connectedCallback() {
     this.loadBooks();
   }
 
   loadBooks() {
-    getBooks()
+    const { title, author, genre } = this.filters;
+    getBooks({ title, author, genre })
       .then(result => {
-        this.books = result.map(book => {
-          return {
-            Id: book.Id,
-            Name: book.Name,
-            AuthorName: book.Author__r ? book.Author__r.Name : 'Nezināms autors',
-            DateAdded: book.Date_added__c,
-            NumberOfPages: book.Number_of_pages__c,
-            GenreName: book.Genre__r ? book.Genre__r.Name : 'Nezināms žanrs'
-          };
-        });
+        this.books = result.map(book => ({
+          Id: book.Id,
+          Name: book.Name,
+          AuthorName: book.Author__r ? book.Author__r.Name : 'Unknown',
+          NumberOfPages: book.Number_of_pages__c,
+          GenreName: book.Genre__r ? book.Genre__r.Name : 'Unknown'
+        }));
       })
       .catch(error => {
         console.error('Error loading books:', error);
+        this.showError('Error loading books.');
       });
+  }
+
+  handleFilterChange(event) {
+    const { filterType, filterValue } = event.detail;
+    this.filters[filterType] = filterValue;
+    this.loadBooks();
+  }
+
+  handleClearFilters() {
+    this.filters = { title: '', genre: '', author: '' };
+    this.loadBooks();
   }
 
   handleOpenBookModal() {
@@ -99,4 +114,7 @@ export default class BookPage extends LightningElement {
     );
   }
 
+  showError(message) {
+    this.showToast('Error', message, 'error');
+  }
 }

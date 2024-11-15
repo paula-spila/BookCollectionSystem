@@ -39,12 +39,6 @@
                               onchange={handleInputChange}
                               data-id="description"></lightning-textarea>
 
-          <lightning-input label="Pievienošanas datums"
-                           type="date"
-                           value={dateAdded}
-                           onchange={handleInputChange}
-                           data-id="dateAdded"></lightning-input>
-
           <lightning-combobox label="Autors"
                               placeholder="Izvēlēties autoru"
                               options={authorOptions}
@@ -59,10 +53,6 @@
                               onchange={handleGenreChange}>
           </lightning-combobox>
 
-          <lightning-input label="ISBN"
-                           value={isbn}
-                           onchange={handleInputChange}
-                           data-id="isbn"></lightning-input>
         </div>
 
         <footer class="slds-modal__footer">

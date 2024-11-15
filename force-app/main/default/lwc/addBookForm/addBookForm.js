@@ -9,8 +9,6 @@ export default class AddBookForm extends LightningElement {
   @track publicationDate = '';
   @track numberOfPages = '';
   @track description = '';
-  @track dateAdded = '';
-  @track isbn = '';
   @track selectedAuthor = '';
   @track selectedGenre = '';
   @track authorOptions = [];
@@ -21,7 +19,6 @@ export default class AddBookForm extends LightningElement {
   connectedCallback() {
     this.loadAuthorOptions();
     this.loadGenreOptions();
-    this.setDefaultDateAdded();
   }
 
   @api openModal() {
@@ -80,11 +77,6 @@ export default class AddBookForm extends LightningElement {
       });
   }
 
-  setDefaultDateAdded() {
-    const today = new Date().toISOString().split('T')[0];
-    this.dateAdded = today;
-  }
-
   handleSave() {
     if (!this.bookName) {
       this.dispatchEvent(
@@ -102,10 +94,8 @@ export default class AddBookForm extends LightningElement {
       publicationDate: this.publicationDate || null,
       numberOfPages: this.numberOfPages ? parseInt(this.numberOfPages, 10) : null,
       description: this.description || null,
-      dateAdded: this.dateAdded || null,
       authorId: this.selectedAuthor || null,
-      genreId: this.selectedGenre || null,
-      isbn: this.isbn || null
+      genreId: this.selectedGenre || null
     })
       .then(() => {
         this.isOpen = false;
