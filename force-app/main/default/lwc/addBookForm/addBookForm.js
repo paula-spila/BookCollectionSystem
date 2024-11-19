@@ -13,6 +13,7 @@ export default class AddBookForm extends LightningElement {
   @track selectedGenre = '';
   @track authorOptions = [];
   @track genreOptions = [];
+  @track bookCover = '';
 
   @api isOpen = false;
 
@@ -95,7 +96,8 @@ export default class AddBookForm extends LightningElement {
       numberOfPages: this.numberOfPages ? parseInt(this.numberOfPages, 10) : null,
       description: this.description || null,
       authorId: this.selectedAuthor || null,
-      genreId: this.selectedGenre || null
+      genreId: this.selectedGenre || null,
+      bookCover: this.bookCover || null
     })
       .then(() => {
         this.isOpen = false;

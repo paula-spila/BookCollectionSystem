@@ -31,7 +31,7 @@ export default class FiltersComponent extends LightningElement {
     getAuthors()
       .then(result => {
         this.authorOptions = [{ label: 'All', value: '' }, ...result.map(author => ({
-          label: author.Name,
+          label: `${author.Name} ${author.Surname__c}`,
           value: author.Name,
         }))];
       })
