@@ -18,6 +18,7 @@
             <lightning-datatable key-field="Id"
                                  data={books}
                                  columns={columns}
+                                 onrowaction={handleRowAction}
                                  hide-checkbox-column
                                  class="book-table"
                                  resize-column-disabled="true">
