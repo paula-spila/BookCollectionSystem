@@ -1,15 +1,29 @@
 import { LightningElement, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { NavigationMixin } from 'lightning/navigation';
 import getBooks from '@salesforce/apex/BookController.getBooks';
 
-export default class BookPage extends LightningElement {
+export default class BookPage extends NavigationMixin(LightningElement) {
   @track books = [];
   @track columns = [
-    { label: 'Grāmata', fieldName: 'Name' },
+    {
+      label: 'Grāmata',
+      fieldName: 'Name',
+      type: 'button',
+      typeAttributes: {
+        label: { fieldName: 'Name' },
+        name: 'view_record',
+        variant: 'base'
+      }
+    },
     { label: 'Autora vārds', fieldName: 'AuthorName' },
     { label: 'Autora uzvārds', fieldName: 'AuthorSurname' },
     { label: 'Lappušu skaits', fieldName: 'NumberOfPages', type: 'number' },
-    { label: 'Žanrs', fieldName: 'GenreName' }
+    { label: 'Žanrs', fieldName: 'GenreName' },
+    {
+      type: 'action',
+      typeAttributes: { rowActions: this.getRowActions.bind(this) },
+    },
   ];
 
   @track isBookModalOpen = false;
@@ -44,6 +58,30 @@ export default class BookPage extends LightningElement {
         console.error('Error loading books:', error);
         this.showError('Error loading books.');
       });
+  }
+
+  getRowActions(row, doneCallback) {
+    const actions = [];
+    actions.push({ label: 'Apskatīt grāmatu', name: 'view_record' });
+    doneCallback(actions);
+  }
+
+  handleRowAction(event) {
+    const actionName = event.detail.action.name;
+    const row = event.detail.row;
+    if (actionName === 'view_record') {
+      this.viewRecord(row);
+    }
+  }
+
+  viewRecord(row) {
+    this[NavigationMixin.Navigate]({
+      type: 'standard__recordPage',
+      attributes: {
+        recordId: row.Id,
+        actionName: 'view'
+      }
+    });
   }
 
   handleFilterChange(event) {
