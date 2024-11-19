@@ -1,12 +1,12 @@
 public with sharing class BookController {
     @AuraEnabled
     public static List<Author__c> getAuthors() {
-        return [SELECT Id, Name FROM Author__c];
+        return [SELECT Id, Name, Surname__c FROM Author__c ORDER BY Name, Surname__c];
     }
 
     @AuraEnabled
     public static List<Genre__c> getGenres() {
-        return [SELECT Id, Name FROM Genre__c];
+        return [SELECT Id, Name FROM Genre__c ORDER BY Name];
     }
 
     @AuraEnabled
@@ -30,7 +30,7 @@ public with sharing class BookController {
         String authorFilter = '%' + author + '%';
         String genreFilter = '%' + genre + '%';
 
-        String query = 'SELECT Id, Name, Author__r.Name, Number_of_pages__c, Genre__r.Name FROM Book__c ';
+        String query = 'SELECT Id, Name, Author__r.Name,Author__r.Surname__c, Number_of_pages__c, Genre__r.Name FROM Book__c ';
 
         Boolean hasFilter = !String.isBlank(title) || !String.isBlank(author) || !String.isBlank(genre);
 
@@ -61,7 +61,8 @@ public with sharing class BookController {
         Integer numberOfPages,
         String description,
         Id authorId,
-        Id genreId
+        Id genreId,
+        String bookCover
     ) {
         // Validate required fields
         if (String.isBlank(name)) {
@@ -90,7 +91,8 @@ public with sharing class BookController {
             Number_of_Pages__c = numberOfPages,
             Description__c = description,
             Author__c = authorId,
-            Genre__c = genreId
+            Genre__c = genreId,
+            Book_cover__c = bookCover
         );
 
         try {

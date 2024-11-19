@@ -6,7 +6,8 @@ export default class BookPage extends LightningElement {
   @track books = [];
   @track columns = [
     { label: 'Grāmata', fieldName: 'Name' },
-    { label: 'Autors', fieldName: 'AuthorName' },
+    { label: 'Autora vārds', fieldName: 'AuthorName' },
+    { label: 'Autora uzvārds', fieldName: 'AuthorSurname' },
     { label: 'Lappušu skaits', fieldName: 'NumberOfPages', type: 'number' },
     { label: 'Žanrs', fieldName: 'GenreName' }
   ];
@@ -34,6 +35,7 @@ export default class BookPage extends LightningElement {
           Id: book.Id,
           Name: book.Name,
           AuthorName: book.Author__r ? book.Author__r.Name : 'Unknown',
+          AuthorSurname: book.Author__r ? book.Author__r.Surname__c : 'Unknown',
           NumberOfPages: book.Number_of_pages__c,
           GenreName: book.Genre__r ? book.Genre__r.Name : 'Unknown'
         }));

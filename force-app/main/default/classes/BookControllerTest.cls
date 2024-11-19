@@ -173,12 +173,11 @@ public with sharing class BookControllerTest {
         Boolean exceptionThrown = false;
         Test.startTest();
         try {
-            BookController.addBook(null, Date.today(), 123, 'Valid description', 'a0X1i000000CAXX', 'a0X1i000000CBXX');
+            BookController.addBook(null, Date.today(), 123, 'Valid description', 'a0X1i000000CAXX', 'a0X1i000000CBXX', 'http://example.com/cover.jpg');
         } catch (AuraHandledException e) {
             exceptionThrown = true;
         }
         Test.stopTest();
-        
         System.assert(exceptionThrown, 'An AuraHandledException should have been thrown.');
     }
 
@@ -187,7 +186,7 @@ public with sharing class BookControllerTest {
         Boolean exceptionThrown = false;
         Test.startTest();
         try {
-            BookController.addBook('Test Book', Date.today().addDays(1), 123, 'Valid description', 'a0X1i000000CAXX', 'a0X1i000000CBXX');
+            BookController.addBook('Test Book', Date.today().addDays(1), 123, 'Valid description', 'a0X1i000000CAXX', 'a0X1i000000CBXX', 'http://example.com/cover.jpg');
         } catch (AuraHandledException e) {
             exceptionThrown = true;
         }
@@ -200,7 +199,7 @@ public with sharing class BookControllerTest {
         Boolean exceptionThrown = false;
         Test.startTest();
         try {
-            BookController.addBook('Test Book', Date.today(), -1, 'Valid description', 'a0X1i000000CAXX', 'a0X1i000000CBXX');
+            BookController.addBook('Test Book', Date.today(), -1, 'Valid description', 'a0X1i000000CAXX', 'a0X1i000000CBXX', 'http://example.com/cover.jpg');
         } catch (AuraHandledException e) {
             exceptionThrown = true;
         }
@@ -209,25 +208,12 @@ public with sharing class BookControllerTest {
     }
 
     @isTest
-    static void testAddedDateInFuture() {
-        Boolean exceptionThrown = false;
-        Test.startTest();
-        try {
-            BookController.addBook('Test Book', Date.today(), 123, 'Valid description',  'a0X1i000000CAXX', 'a0X1i000000CBXX');
-        } catch (AuraHandledException e) {
-            exceptionThrown = true;
-        }
-        Test.stopTest();
-        System.assert(exceptionThrown, 'An AuraHandledException should have been thrown for an added date in the future.');
-    }
-
-    @isTest
     static void testExcessiveDescriptionLength() {
         Boolean exceptionThrown = false;
         String longDescription = String.join(new List<String>(3001), 'a');
         Test.startTest();
         try {
-            BookController.addBook('Test Book', Date.today(), 123, longDescription, 'a0X1i000000CAXX', 'a0X1i000000CBXX');
+            BookController.addBook('Test Book', Date.today(), 123, longDescription, 'a0X1i000000CAXX', 'a0X1i000000CBXX', 'http://example.com/cover.jpg');
         } catch (AuraHandledException e) {
             exceptionThrown = true;
         }
@@ -235,18 +221,21 @@ public with sharing class BookControllerTest {
         System.assert(exceptionThrown, 'An AuraHandledException should have been thrown for an excessive description length.');
     }
 
-     @isTest
+
+    @isTest
     static void testSuccessfulBookCreation() {
-        setupTestData();
+        setupTestData(); // Assuming this sets up necessary Author__c and Genre__c data.
         Author__c author = [SELECT Id FROM Author__c WHERE Name = 'Author One' LIMIT 1];
         Genre__c genre = [SELECT Id FROM Genre__c WHERE Name = 'Science Fiction' LIMIT 1];
-        
+
         Test.startTest();
-        Id bookId = BookController.addBook('Test Book', Date.today(), 123, 'Valid description', author.Id, genre.Id);
+        Id bookId = BookController.addBook('Test Book', Date.today(), 123, 'Valid description', author.Id, genre.Id, 'http://example.com/cover.jpg');
         Test.stopTest();
 
-        Book__c createdBook = [SELECT Id, Name FROM Book__c WHERE Id = :bookId];
+        Book__c createdBook = [SELECT Id, Name, Book_Cover__c FROM Book__c WHERE Id = :bookId];
         System.assertNotEquals(null, createdBook, 'Book should have been created.');
         System.assertEquals('Test Book', createdBook.Name, 'Book name should match.');
+        System.assertEquals('http://example.com/cover.jpg', createdBook.Book_Cover__c, 'Book cover URL should match.');
     }
+
 }
