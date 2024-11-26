@@ -1,0 +1,23 @@
+<template>
+  <template if:true={books}>
+    <div class="currently-reading-container">
+      <p>Pašlaik lasa:</p>
+      <template for:each={books}
+                for:item="book">
+        <lightning-card key={book.Id}
+                        title={book.Book__r.Name}>
+          <p>{book.Book__r.Author__r.Name}</p>
+          <p>Pašreizējā lapa: {book.Current_page__c}</p>
+          <lightning-button label="Rediģēt lapusi"
+                            variant="neutral"
+                            data-id={book.Id}
+                            onclick={handleEditPage}>
+          </lightning-button>
+        </lightning-card>
+      </template>
+    </div>
+  </template>
+  <template if:false={books}>
+    <p>No books currently being read.</p>
+  </template>
+</template>
