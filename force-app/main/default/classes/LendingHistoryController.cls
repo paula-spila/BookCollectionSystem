@@ -28,7 +28,7 @@ public with sharing class LendingHistoryController {
         }
 
         Lending_History__c newLending = new Lending_History__c(
-            Book__c = bookId,
+            //Book__c = bookId,
             Name = lendingHistoryName,
             Lending_date__c = lendingDate,
             Return_date__c = returnDate,
