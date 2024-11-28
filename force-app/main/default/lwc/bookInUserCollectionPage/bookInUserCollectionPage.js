@@ -1,71 +1,61 @@
-import { LightningElement } from 'lwc';
-// import getAllBooksInUserCollection from '@salesforce/apex/BookInUserCollectionController.getAllBooksInUserCollection';
-// import lendBook from '@salesforce/apex/BookInUserCollectionController.lendBook';
-// import addBookToCollection from '@salesforce/apex/BookInUserCollectionController.addBookToCollection';
-
-// import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { LightningElement, track } from 'lwc';
 
 export default class BookInUserCollectionPage extends LightningElement {
-  handleTabChange(event) {
-    const tabId = event.target.dataId;
-    console.log(`Current tab is ${tabId}`);
+  @track filters = {
+    title: '',
+    genre: '',
+    author: '',
+  };
+
+  @track activeTab = 'allBooks';
+
+  get isAllBooks() {
+    return this.activeTab === 'allBooks';
   }
 
-  // @track books;
-  // @track selectedBook;
-  // // @track reviews;
-  // // @track isReviewModalOpen = false;
+  get isReadBooks() {
+    return this.activeTab === 'readBooks';
+  }
 
-  // @wire(getAllBooksInUserCollection)
-  // wiredBooks({ error, data }) {
-  //   if (data) {
-  //     this.books = data.map(item => item.Book__r);
-  //   } else if (error) {
-  //     this.showToast('Error', error.body.message, 'error');
-  //   }
-  // }
+  get isWantToRead() {
+    return this.activeTab === 'wantToRead';
+  }
 
-  // handleLendBook(event) {
-  //   lendBook({ bookId: event.detail })
-  //     .then(result => {
-  //       this.showToast('Success', result, 'success');
-  //     })
-  //     .catch(error => {
-  //       this.showToast('Error', error.body.message, 'error');
-  //     });
-  // }
+  handleTabChange(event) {
+    const selectedTab = event.target.label;
 
-  // handleAddBookToCollection(event) {
-  //   addBookToCollection({ bookId: event.detail })
-  //     .then(result => {
-  //       this.showToast('Success', result, 'success');
-  //     })
-  //     .catch(error => {
-  //       this.showToast('Error', error.body.message, 'error');
-  //     });
-  // }
+    if (selectedTab.includes('Visas manas grāmatas')) {
+      this.activeTab = 'allBooks';
+    } else if (selectedTab.includes('Izlasītas')) {
+      this.activeTab = 'readBooks';
+    } else if (selectedTab.includes('Gribu izlasīt')) {
+      this.activeTab = 'wantToRead';
+    }
 
+    this.applyFiltersToActiveTab();
+  }
 
-  // // handleOpenReviewModal() {
-  // //   this.isReviewModalOpen = true;
-  // // }
+  handleFilterChange(event) {
+    const { filterType, filterValue } = event.detail;
+    this.filters = { ...this.filters, [filterType]: filterValue };
 
-  // // handleCloseReviewModal() {
-  // //   this.isReviewModalOpen = false;
-  // // }
+    this.applyFiltersToActiveTab();
+  }
 
-  // // handleReviewAdded() {
-  // //   this.handleSelectBook({ detail: this.selectedBook });
-  // //   this.handleCloseReviewModal();
-  // // }
+  handleClearFilters() {
+    this.filters = {
+      title: '',
+      genre: '',
+      author: '',
+    };
 
-  // showToast(title, message, variant) {
-  //   const evt = new ShowToastEvent({
-  //     title: title,
-  //     message: message,
-  //     variant: variant,
-  //   });
-  //   this.dispatchEvent(evt);
-  // }
+    this.applyFiltersToActiveTab();
+  }
 
+  applyFiltersToActiveTab() {
+    const bookCard = this.template.querySelector('c-book-card');
+    if (bookCard) {
+      bookCard.applyFilters(this.filters);
+    }
+  }
 }

@@ -1,19 +1,52 @@
 <template>
-  <!-- <div class="slds-box slds-theme_default">
-    <h3>{book.Name}</h3>
-    <p>Author: {book.Author__r.Name}</p>
-    <p>Genre: {book.Genre__r.Name}</p>
-    <p>Publication Date: {book.PublicationDate__c}</p>
-    <p>Average Rating: {book.AverageRating__c}</p>
-    <lightning-button label="Lend"
-                      onclick={handleLendBook}></lightning-button>
-    <lightning-button label="Add to Collection"
-                      onclick={handleAddBookToCollection}></lightning-button>
-    <lightning-button label="View Details"
-                      onclick={handleViewDetails}></lightning-button>
-  </div> -->
+  <template if:true={isLoading}>
+    <lightning-spinner alternative-text="Loading books..."
+                       size="medium"></lightning-spinner>
+  </template>
 
-  <div class="placeholder-content">
-    <p>This is placeholder content for: {pageName}</p>
-  </div>
+  <template if:false={isLoading}>
+    <template if:true={filteredBooks}>
+      <div class="book-cards-container">
+
+        <template for:each={filteredBooks}
+                  for:item="bookEntry">
+          <div key={bookEntry.Id}
+               class="book-card slds-box slds-theme_default"
+               data-id={bookEntry.Id}
+               onclick={handleCardClick}>
+
+            <div class="book-cover-container">
+              <template if:true={bookEntry.Book__r.Book_cover__c}>
+                <img src={bookEntry.Book__r.Book_cover__c}
+                     alt="Book Cover"
+                     class="book-cover" />
+              </template>
+              <template if:false={bookEntry.Book__r.Book_cover__c}>
+                <img src="https://placeholder6-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Png&versionId=068d20000025O8b&operationContext=CHATTER&contentId=05Td2000002Osvl"
+                     alt="Default Book Cover"
+                     class="book-cover" />
+              </template>
+            </div>
+
+            <div class="book-details-container">
+              <h3 class="book-title">{bookEntry.Book__r.Name}</h3>
+              <p class="book-author">{bookEntry.Book__r.Author__r.Name} {bookEntry.Book__r.Author__r.Surname__c}</p>
+              <p class="book-status">
+                <template if:true={bookEntry.Reading_status__c}>
+                  {bookEntry.Reading_status__c}
+                </template>
+              </p>
+            </div>
+
+          </div>
+        </template>
+
+      </div>
+    </template>
+
+    <template if:false={filteredBooks}>
+      <p>No books match the selected filters.</p>
+    </template>
+
+  </template>
 </template>
