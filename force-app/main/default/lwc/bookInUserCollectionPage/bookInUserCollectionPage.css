@@ -1,0 +1,32 @@
+.custom-tabs-container {
+  background-color: #f4f6f9;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-tabset .slds-tabs_default__item {
+  font-size: 16px;
+  font-weight: bold;
+  color: #0070d2;
+  margin-right: 20px;
+  transition: all 0.3s ease;
+}
+
+.custom-tabset .slds-tabs_default__item.slds-is-active a {
+  color: #005fbf;
+  border-bottom: 3px solid #005fbf;
+  font-weight: bold;
+}
+
+.custom-tabset .slds-tabs_default__item a:hover {
+  color: #005fbf;
+}
+
+.custom-tab {
+  padding: 10px 0;
+}
+
+.slds-tabs_scoped__content {
+  padding: 20px;
+}

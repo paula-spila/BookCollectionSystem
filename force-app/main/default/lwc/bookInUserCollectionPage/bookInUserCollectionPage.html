@@ -2,9 +2,8 @@
   <lightning-card>
     <div class="slds-p-around_medium">
       <div class="slds-grid slds-gutters slds-wrap full-height">
-        <!-- Filter and Currently Reading Panels -->
         <div class="slds-col slds-size_2-of-12 filter-panel">
-          <!-- Filters Panel -->
+
           <c-filters-component filters={filters}
                                genre-options={genreOptions}
                                author-options={authorOptions}
@@ -12,66 +11,52 @@
                                onclearfilters={handleClearFilters}>
           </c-filters-component>
 
-          <!-- Currently Reading Panel -->
           <div class="currently-reading">
             <c-currently-reading-component></c-currently-reading-component>
           </div>
-
         </div>
 
         <!-- Tabs Section -->
         <div class="slds-col slds-size_10-of-12 slds-p-around_medium">
           <lightning-card class="tabs-card">
-            <lightning-tabset>
-              <lightning-tab label="Visas manas grāmatas"
-                             data-id="allBooks"
-                             onactive={handleTabChange}>
-                <c-book-card page-name="Visas manas grāmatas"></c-book-card>
-              </lightning-tab>
-              <lightning-tab label="Izlasītas"
-                             data-id="readBooks"
-                             onactive={handleTabChange}>
-                <c-book-card page-name="Izlasītas"></c-book-card>
-              </lightning-tab>
-              <lightning-tab label="Gribu izlasīt"
-                             data-id="wantToRead"
-                             onactive={handleTabChange}>
-                <c-book-card page-name="Gribu izlasīt"></c-book-card>
-              </lightning-tab>
-            </lightning-tabset>
+            <div class="custom-tabs-container">
+
+              <lightning-tabset variant="scoped"
+                                class="custom-tabset">
+
+                <lightning-tab label="📚 Visas manas grāmatas"
+                               onactive={handleTabChange}
+                               class="custom-tab">
+                  <template if:true={isAllBooks}>
+                    <c-book-card page-name="allBooks"
+                                 filters={filters}></c-book-card>
+                  </template>
+                </lightning-tab>
+
+                <lightning-tab label="✔️ Izlasītas"
+                               onactive={handleTabChange}
+                               class="custom-tab">
+                  <template if:true={isReadBooks}>
+                    <c-book-card page-name="readBooks"
+                                 filters={filters}></c-book-card>
+                  </template>
+                </lightning-tab>
+
+                <lightning-tab label="📖 Gribu izlasīt"
+                               onactive={handleTabChange}
+                               class="custom-tab">
+                  <template if:true={isWantToRead}>
+                    <c-book-card page-name="wantToRead"
+                                 filters={filters}></c-book-card>
+                  </template>
+                </lightning-tab>
+
+              </lightning-tabset>
+
+            </div>
           </lightning-card>
         </div>
-
-        <!-- Button Panel -->
-        <!-- <div class="slds-col slds-size_2-of-12 button-panel slds-p-around_medium">
-          <lightning-button label="Pievienot grāmatu"
-                            class="button-spacing"
-                            onclick={handleOpenBookModal}>
-          </lightning-button>
-          <lightning-button label="Pievienot autoru"
-                            class="button-spacing"
-                            onclick={handleOpenAuthorModal}>
-          </lightning-button>
-          <lightning-button label="Pievienot vērtējumu"
-                            class="button-spacing"
-                            onclick={handleOpenReviewModal}>
-          </lightning-button>
-          <lightning-button label="Aizdot grāmatu"
-                            class="button-spacing"
-                            onclick={handleOpenLendingModal}>
-          </lightning-button>
-        </div> -->
       </div>
     </div>
   </lightning-card>
-
-  <!-- Modals
-  <c-add-book-form is-open={isBookModalOpen}
-                   onbookadded={handleBookAdded}></c-add-book-form>
-  <c-add-author-form is-open={isAuthorModalOpen}
-                     onauthoradded={handleAuthorAdded}></c-add-author-form>
-  <c-add-book-review-form is-open={isReviewModalOpen}
-                          onreviewadded={handleReviewAdded}></c-add-book-review-form>
-  <c-add-lending-form is-open={isLendingModalOpen}
-                      onlendingadded={handleLendingAdded}></c-add-lending-form> -->
 </template>

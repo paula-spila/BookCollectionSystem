@@ -8,74 +8,53 @@ public with sharing class BookInUserCollectionController {
         ];
     }
 
+    @AuraEnabled(cacheable=true)
+    public static List<BookInUserCollection__c> getBooks(String collectionType) {
+        Id currentUserId = UserInfo.getUserId();
+        System.debug('Current User ID: ' + currentUserId);
+        System.debug('Collection Type: ' + collectionType);
 
-    // @AuraEnabled
-    // public static List<BookInUserCollection__c> getAllBooksInUserCollection() {
-    //     try {
-    //         return [SELECT Id, Book__r.Id, Book__r.Name, Book__r.Author__r.Name, Book__r.Publication_date__c, Book__r.Genre__r.Name
-    //                 FROM BookInUserCollection__c
-    //                 WHERE User__c = :UserInfo.getUserId()];
-    //     } catch (Exception e) {
-    //         throw new AuraHandledException(e.getMessage());
-    //     }
-    // }
+        List<BookInUserCollection__c> userBooks = new List<BookInUserCollection__c>();
 
-    // @AuraEnabled
-    // public static String lendBook(Id bookId) {
-    //     try {
-    //         Lending_History__c lending = new Lending_History__c(
-    //             BookInUserCollection__c = bookId,
-    //             //LentBy__c = UserInfo.getUserId(),
-    //             Lending_date__c = Date.today()
-    //         );
-    //         insert lending;
-    //         return 'Book lent successfully';
-    //     } catch (Exception e) {
-    //         throw new AuraHandledException(e.getMessage());
-    //     }
-    // }
+        if (collectionType == 'allBooks') {
+            userBooks = [
+                SELECT Id, 
+                    Book__r.Name, 
+                    Book__r.Author__r.Name,
+                    Book__r.Author__r.Surname__C, 
+                    Book__r.Genre__r.Name, 
+                    Book__r.Book_cover__c, 
+                    Reading_status__c
+                FROM BookInUserCollection__c
+                WHERE User__c = :currentUserId
+            ];
+        } else if (collectionType == 'readBooks') {
+            userBooks = [
+                SELECT Id, 
+                    Book__r.Name, 
+                    Book__r.Author__r.Name,
+                    Book__r.Author__r.Surname__C, 
+                    Book__r.Genre__r.Name, 
+                    Book__r.Book_cover__c, 
+                    Reading_status__c
+                FROM BookInUserCollection__c
+                WHERE User__c = :currentUserId AND Reading_status__c = 'Read'
+            ];
+        } else if (collectionType == 'wantToRead') {
+            userBooks = [
+                SELECT Id, 
+                    Book__r.Name, 
+                    Book__r.Author__r.Name, 
+                    Book__r.Author__r.Surname__C,
+                    Book__r.Genre__r.Name, 
+                    Book__r.Book_cover__c, 
+                    Reading_status__c
+                FROM BookInUserCollection__c
+                WHERE User__c = :currentUserId AND Reading_status__c = 'Want to Read'
+            ];
+        }
 
-    // @AuraEnabled
-    // public static List<BookInUserCollection__c> getUserBookCollection() {
-    //     try {
-    //         return [SELECT Id, Book__r.Name, User__r.Name, Reading_status__c
-    //                 FROM BookInUserCollection__c
-    //                 WHERE User__c = :UserInfo.getUserId()];
-    //     } catch (Exception e) {
-    //         throw new AuraHandledException(e.getMessage());
-    //     }
-    // }
-
-    // @AuraEnabled
-    // public static String addBookToCollection(Id bookId) {
-    //     try {
-    //         BookInUserCollection__c userBook = new BookInUserCollection__c(
-    //             Book__c = bookId,
-    //             User__c = UserInfo.getUserId(),
-    //             Reading_status__c = 'Want to read'
-    //         );
-    //         insert userBook;
-    //         return 'Book added to collection successfully';
-    //     } catch (Exception e) {
-    //         throw new AuraHandledException(e.getMessage());
-    //     }
-    // }
-
-    // @AuraEnabled
-    // public static String addBookReview(Id bookId, String reviewName, String reviewText, Decimal rating, Date dateOfReview) {
-    //     try {
-    //         Book_Review__c review = new Book_Review__c(
-    //             Book__c = bookId,
-    //             Name = reviewName,
-    //             Review_text__c = reviewText,
-    //             Rating__c = rating,
-    //             Date_of_review__c = dateOfReview
-    //         );
-    //         insert review;
-    //         return 'Review added successfully';
-    //     } catch (Exception e) {
-    //         throw new AuraHandledException(e.getMessage());
-    //     }
-    // }
-
+        System.debug('Books Retrieved: ' + userBooks);
+        return userBooks;
+    }
 }
