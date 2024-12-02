@@ -1,31 +1,36 @@
 <template>
-  <h2 class="slds-text-heading_small slds-p-around_medium">FILTRI</h2>
+  <div class="filters-container">
+    <h2 class="filters-header">Filtri</h2>
 
-  <lightning-input label="Book Title"
-                   value={title}
-                   onchange={handleFilterChange}
-                   data-id="title"
-                   placeholder="Enter book title">
-  </lightning-input>
+    <div class="filters-fields">
+      <lightning-input label="Book Title"
+                       value={title}
+                       onchange={handleFilterChange}
+                       data-id="title"
+                       placeholder="Enter book title">
+      </lightning-input>
 
-  <lightning-combobox label="Author"
-                      value={author}
-                      options={authorOptions}
-                      onchange={handleFilterChange}
-                      data-id="author"
-                      placeholder="Select author">
-  </lightning-combobox>
+      <lightning-combobox label="Author"
+                          value={author}
+                          options={authorOptions}
+                          onchange={handleFilterChange}
+                          data-id="author"
+                          placeholder="Select author">
+      </lightning-combobox>
 
-  <lightning-combobox label="Genre"
-                      value={genre}
-                      options={genreOptions}
-                      onchange={handleFilterChange}
-                      data-id="genre"
-                      placeholder="Select genre">
-  </lightning-combobox>
+      <lightning-combobox label="Genre"
+                          value={genre}
+                          options={genreOptions}
+                          onchange={handleFilterChange}
+                          data-id="genre"
+                          placeholder="Select genre">
+      </lightning-combobox>
+    </div>
 
-  <lightning-button label="Clear Filters"
-                    variant="neutral"
-                    onclick={clearFilters}>
-  </lightning-button>
+    <lightning-button label="Clear Filters"
+                      variant="neutral"
+                      class="clear-filters-button"
+                      onclick={clearFilters}>
+    </lightning-button>
+  </div>
 </template>

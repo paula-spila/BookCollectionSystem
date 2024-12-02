@@ -1,0 +1,31 @@
+.filters-container {
+  background-color: #f4f6f9;
+  border: 1px solid #d8dde6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.filters-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+lightning-input,
+lightning-combobox {
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.clear-filters-button:hover {
+  background-color: #e0e3e8;
+}
+
+.clear-filters-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px #cfe7fc;
+}
