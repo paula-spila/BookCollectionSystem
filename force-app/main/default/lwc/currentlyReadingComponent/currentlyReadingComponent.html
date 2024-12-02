@@ -1,23 +1,56 @@
 <template>
   <template if:true={books}>
     <div class="currently-reading-container">
-      <p>Pašlaik lasa:</p>
-      <template for:each={books}
-                for:item="book">
-        <lightning-card key={book.Id}
-                        title={book.Book__r.Name}>
-          <p>{book.Book__r.Author__r.Name}</p>
-          <p>Pašreizējā lapa: {book.Current_page__c}</p>
-          <lightning-button label="Rediģēt lapusi"
-                            variant="neutral"
-                            data-id={book.Id}
-                            onclick={handleEditPage}>
-          </lightning-button>
-        </lightning-card>
-      </template>
+      <p class="currently-reading-header">Pašlaik lasa</p>
+      <div class="currently-reading-cards">
+        <template for:each={books}
+                  for:item="book">
+          <div key={book.Id}
+               class="slds-p-around_small currently-reading-card"
+               data-id={book.Id}
+               onclick={handleBookClick}>
+            <div class="card-header">
+              <h3 class="book-title">{book.Book__r.Name}</h3>
+              <p class="book-author">
+                {book.Book__r.Author__r.Name} {book.Book__r.Author__r.Surname__c}
+              </p>
+            </div>
+            <div class="card-content">
+              <p class="current-page">
+                Lappuse: {book.Current_page__c} / {book.Book__r.Number_of_pages__c}
+              </p>
+
+              <lightning-button label="Rediģēt lappusi"
+                                variant="neutral"
+                                data-id={book.Id}
+                                data-current-page={book.Current_page__c}
+                                data-total-pages={book.Book__r.Number_of_pages__c}
+                                class="edit-button"
+                                onclick={handleEditPage}>
+              </lightning-button>
+
+            </div>
+          </div>
+        </template>
+      </div>
     </div>
   </template>
+
   <template if:false={books}>
-    <p>No books currently being read.</p>
+    <div class="no-books-container">
+      <p>No books currently being read.</p>
+    </div>
+  </template>
+
+  <template if:true={showModal}>
+    <c-edit-page-form show-modal={showModal}
+                      current-page={selectedCurrentPage}
+                      total-pages={selectedTotalPages}
+                      onsave={handleModalSave}
+                      oncomplete={handleMarkAsCompleted}
+                      oncancel={handleModalClose}
+                      onpagechange={handlePageChange}
+                      onshowtoast={handleShowToast}>
+    </c-edit-page-form>
   </template>
 </template>

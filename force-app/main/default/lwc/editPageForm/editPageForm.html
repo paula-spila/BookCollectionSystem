@@ -1,0 +1,34 @@
+<template>
+  <template if:true={showModal}>
+    <div class="modal-backdrop"></div>
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Rediģēt lapusi</h2>
+      </div>
+      <div class="modal-body">
+        <lightning-input type="number"
+                         label="Pašreizējā lapa"
+                         value={currentPage}
+                         min="1"
+                         max={totalPages}
+                         onchange={handlePageChange}>
+        </lightning-input>
+      </div>
+      <div class="modal-footer">
+        <div class="button-row">
+          <lightning-button label="Atcelt"
+                            variant="neutral"
+                            onclick={handleCancel}></lightning-button>
+          <lightning-button label="Saglabāt"
+                            variant="brand"
+                            onclick={handleSave}></lightning-button>
+        </div>
+        <div class="button-row full-width">
+          <lightning-button label="Grāmata Pabeigta"
+                            variant="success"
+                            onclick={handleComplete}></lightning-button>
+        </div>
+      </div>
+    </div>
+  </template>
+</template>

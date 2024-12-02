@@ -1,7 +1,7 @@
 <template>
   <lightning-card>
     <div class="slds-p-around_medium">
-      <div class="slds-grid slds-gutters slds-wrap full-height">
+      <div class="slds-grid slds-gutters slds-wrap full-height no-top-spacing">
         <div class="slds-col slds-size_2-of-12 filter-panel">
 
           <c-filters-component filters={filters}
@@ -17,44 +17,42 @@
         </div>
 
         <!-- Tabs Section -->
-        <div class="slds-col slds-size_10-of-12 slds-p-around_medium">
-          <lightning-card class="tabs-card">
-            <div class="custom-tabs-container">
+        <div class="slds-col slds-size_10-of-12 no-top-spacing">
+          <div class="custom-tabs-container">
 
-              <lightning-tabset variant="scoped"
-                                class="custom-tabset">
+            <lightning-tabset variant="scoped"
+                              class="custom-tabset">
 
-                <lightning-tab label="📚 Visas manas grāmatas"
-                               onactive={handleTabChange}
-                               class="custom-tab">
-                  <template if:true={isAllBooks}>
-                    <c-book-card page-name="allBooks"
-                                 filters={filters}></c-book-card>
-                  </template>
-                </lightning-tab>
+              <lightning-tab label="📚 Visas manas grāmatas"
+                             onactive={handleTabChange}
+                             class="custom-tab">
+                <template if:true={isAllBooks}>
+                  <c-book-card page-name="allBooks"
+                               filters={filters}></c-book-card>
+                </template>
+              </lightning-tab>
 
-                <lightning-tab label="✔️ Izlasītas"
-                               onactive={handleTabChange}
-                               class="custom-tab">
-                  <template if:true={isReadBooks}>
-                    <c-book-card page-name="readBooks"
-                                 filters={filters}></c-book-card>
-                  </template>
-                </lightning-tab>
+              <lightning-tab label="✔️ Izlasītas"
+                             onactive={handleTabChange}
+                             class="custom-tab">
+                <template if:true={isReadBooks}>
+                  <c-book-card page-name="readBooks"
+                               filters={filters}></c-book-card>
+                </template>
+              </lightning-tab>
 
-                <lightning-tab label="📖 Gribu izlasīt"
-                               onactive={handleTabChange}
-                               class="custom-tab">
-                  <template if:true={isWantToRead}>
-                    <c-book-card page-name="wantToRead"
-                                 filters={filters}></c-book-card>
-                  </template>
-                </lightning-tab>
+              <lightning-tab label="📖 Gribu izlasīt"
+                             onactive={handleTabChange}
+                             class="custom-tab">
+                <template if:true={isWantToRead}>
+                  <c-book-card page-name="wantToRead"
+                               filters={filters}></c-book-card>
+                </template>
+              </lightning-tab>
 
-              </lightning-tabset>
+            </lightning-tabset>
 
-            </div>
-          </lightning-card>
+          </div>
         </div>
       </div>
     </div>
