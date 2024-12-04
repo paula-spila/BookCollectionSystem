@@ -1,63 +1,65 @@
 <template>
   <lightning-card>
-    <div class="slds-p-around_medium">
-      <div class="slds-grid slds-gutters slds-wrap full-height">
+    <div class="slds-p-around_medium book-page-container">
+      <div class="slds-grid slds-gutters slds-wrap">
         <!-- Filter Panel -->
-        <div class="slds-col slds-size_2-of-12 filter-panel">
+        <div class="slds-col slds-size_2-of-12 filters-panel">
           <c-filters-component filters={filters}
                                genre-options={genreOptions}
                                author-options={authorOptions}
                                onfilterchange={handleFilterChange}
                                onclearfilters={handleClearFilters}>
           </c-filters-component>
+
+          <div class="button-panel">
+            <div class="action-buttons">
+              <div class="custom-button"
+                   onclick={handleOpenBookModal}>
+                Pievienot grāmatu
+              </div>
+              <div class="custom-button"
+                   onclick={handleOpenAuthorModal}>
+                Pievienot autoru
+              </div>
+              <div class="custom-button"
+                   onclick={handleOpenReviewModal}>
+                Pievienot vērtējumu
+              </div>
+              <div class="custom-button"
+                   onclick={handleOpenLendingModal}>
+                Aizdot grāmatu
+              </div>
+            </div>
+
+          </div>
+
         </div>
 
-        <!-- Table Section -->
-        <div class="slds-col slds-size_8-of-12 slds-p-around_medium">
-          <lightning-card class="table-card">
-            <lightning-datatable key-field="Id"
-                                 data={books}
-                                 columns={columns}
-                                 onrowaction={handleRowAction}
-                                 hide-checkbox-column
-                                 class="book-table"
-                                 resize-column-disabled="true">
-            </lightning-datatable>
-          </lightning-card>
+        <!-- Book Cards Panel -->
+        <div class="slds-col slds-size_10-of-12">
+          <div class="book-cards-container">
+            <c-book-card filters={filters}></c-book-card>
+          </div>
         </div>
 
-        <!-- Button Panel -->
-        <div class="slds-col slds-size_2-of-12 button-panel slds-p-around_medium">
-          <lightning-button label="Pievienot grāmatu"
-                            class="button-spacing"
-                            onclick={handleOpenBookModal}></lightning-button>
-          <lightning-button label="Pievienot autoru"
-                            class="button-spacing"
-                            onclick={handleOpenAuthorModal}></lightning-button>
-          <lightning-button label="Pievienot vērtējumu"
-                            class="button-spacing"
-                            onclick={handleOpenReviewModal}></lightning-button>
-          <lightning-button label="Aizdot grāmatu"
-                            class="button-spacing"
-                            onclick={handleOpenLendingModal}></lightning-button>
-        </div>
       </div>
+
+      <!-- Modals -->
+      <c-add-book-form is-open={isBookModalOpen}
+                       onbookadded={handleBookAdded}>
+      </c-add-book-form>
+
+      <c-add-author-form is-open={isAuthorModalOpen}
+                         onauthoradded={handleAuthorAdded}>
+      </c-add-author-form>
+
+      <c-add-book-review-form is-open={isReviewModalOpen}
+                              onreviewadded={handleReviewAdded}>
+      </c-add-book-review-form>
+
+      <c-add-lending-form is-open={isLendingModalOpen}
+                          onlendingadded={handleLendingAdded}>
+      </c-add-lending-form>
     </div>
   </lightning-card>
-
-  <c-add-book-form is-open={isBookModalOpen}
-                   onbookadded={handleBookAdded}>
-  </c-add-book-form>
-
-  <c-add-author-form is-open={isAuthorModalOpen}
-                     onauthoradded={handleAuthorAdded}>
-  </c-add-author-form>
-
-  <c-add-book-review-form is-open={isReviewModalOpen}
-                          onreviewadded={handleReviewAdded}>
-  </c-add-book-review-form>
-
-  <c-add-lending-form is-open={isLendingModalOpen}
-                      onlendingadded={handleLendingAdded}>
-  </c-add-lending-form>
 </template>

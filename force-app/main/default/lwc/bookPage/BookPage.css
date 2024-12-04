@@ -1,29 +1,72 @@
-.full-height {
-  height: 100vh;
-}
-
-.filter-panel {
-  background-color: #e0e0e0;
-}
-
-.table-card {
-  width: 100%;
-  height: 100%;
-}
-
-.book-table {
-  width: 100%;
-  height: 80vh;
-}
-
-.button-panel {
+.book-page-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
+  gap: 20px;
 }
 
-.button-spacing {
-  margin-bottom: 10px;
+.book-cards-container {
+  background-color: #f4f6f9;
+  border: 1px solid #d8dde6;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
+  padding: 0.6rem;
+  margin: 6px auto;
+  background-color: #ffffff;
+  border: 1px solid #d8dde6;
+  color: #0070d2;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-button:hover {
+  background-color: #f4f6f9;
+  border-color: #c9d1db;
+  color: #005fbf;
+}
+
+.custom-button:active {
+  background-color: #e3e8ef;
+  border-color: #b0b8c5;
+}
+
+.action-buttons {
+  background-color: #f4f6f9;
+  border: 1px solid #d8dde6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+
+  .filters-panel,
+  .button-panel,
+  .book-cards-container {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .action-buttons {
+    gap: 10px;
+  }
+
+  .custom-button {
+    font-size: 0.9rem;
+  }
 }

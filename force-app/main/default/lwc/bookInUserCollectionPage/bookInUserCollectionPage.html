@@ -1,7 +1,7 @@
 <template>
   <lightning-card>
     <div class="slds-p-around_medium">
-      <div class="slds-grid slds-gutters slds-wrap full-height no-top-spacing">
+      <div class="slds-grid slds-gutters slds-wrap full-height">
         <div class="slds-col slds-size_2-of-12 filter-panel">
 
           <c-filters-component filters={filters}
@@ -17,7 +17,7 @@
         </div>
 
         <!-- Tabs Section -->
-        <div class="slds-col slds-size_10-of-12 no-top-spacing">
+        <div class="slds-col slds-size_10-of-12">
           <div class="custom-tabs-container">
 
             <lightning-tabset variant="scoped"
@@ -27,8 +27,8 @@
                              onactive={handleTabChange}
                              class="custom-tab">
                 <template if:true={isAllBooks}>
-                  <c-book-card page-name="allBooks"
-                               filters={filters}></c-book-card>
+                  <c-collection-book-card page-name="allBooks"
+                                          filters={filters}></c-collection-book-card>
                 </template>
               </lightning-tab>
 
@@ -36,8 +36,8 @@
                              onactive={handleTabChange}
                              class="custom-tab">
                 <template if:true={isReadBooks}>
-                  <c-book-card page-name="readBooks"
-                               filters={filters}></c-book-card>
+                  <c-collection-book-card page-name="readBooks"
+                                          filters={filters}></c-collection-book-card>
                 </template>
               </lightning-tab>
 
@@ -45,15 +45,15 @@
                              onactive={handleTabChange}
                              class="custom-tab">
                 <template if:true={isWantToRead}>
-                  <c-book-card page-name="wantToRead"
-                               filters={filters}></c-book-card>
+                  <c-collection-book-card page-name="wantToRead"
+                                          filters={filters}></c-collection-book-card>
                 </template>
               </lightning-tab>
 
             </lightning-tabset>
-
           </div>
         </div>
+
       </div>
     </div>
   </lightning-card>
