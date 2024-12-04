@@ -1,47 +1,59 @@
-import { LightningElement, api, track, wire } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
-import getBooks from '@salesforce/apex/BookInUserCollectionController.getBooks';
+import getBooks from '@salesforce/apex/BookController.getBooks';
 
 export default class BookCard extends NavigationMixin(LightningElement) {
-  @api pageName;
   @api filters = {};
-  @track books;
-  @track filteredBooks;
+  @track books = [];
+  @track filteredBooks = [];
   @track isLoading = true;
 
-  @wire(getBooks, { collectionType: '$pageName' })
-  wiredBooks({ error, data }) {
-    if (data) {
-      this.books = data.filter(bookEntry => bookEntry.Book__r);
-      this.applyFilters(this.filters);
-      this.isLoading = false;
-    } else if (error) {
-      this.isLoading = false;
-    }
+  connectedCallback() {
+    this.loadBooks();
   }
 
   @api
-  applyFilters(filters = {}) {
-    if (!this.books) {
-      return;
-    }
+  loadBooks() {
+    const { title, author, genre } = this.filters;
 
-    this.filteredBooks = this.books.filter(bookEntry => {
-      const titleMatch = !filters.title || bookEntry.Book__r.Name.toLowerCase().includes(filters.title.toLowerCase());
-      const genreMatch = !filters.genre || (bookEntry.Book__r.Genre__r && bookEntry.Book__r.Genre__r.Name === filters.genre);
-      const authorMatch = !filters.author || `${bookEntry.Book__r.Author__r.Name} ${bookEntry.Book__r.Author__r.Surname__c}`.toLowerCase().includes(filters.author.toLowerCase());
+    getBooks({ title, author, genre })
+      .then((data) => {
+        this.books = data.map((book) => ({
+          Id: book.Id,
+          Name: book.Name,
+          AuthorName: book.Author__r?.Name || 'Nezināms autors',
+          AuthorSurname: book.Author__r?.Surname__c || '',
+          GenreName: book.Genre__r?.Name || 'Nezināms žanrs',
+          BookCover: book.Book_cover__c,
+        }));
+        this.filteredBooks = [...this.books];
+        this.isLoading = false;
+      })
+      .catch((error) => {
+        console.error('Error loading books:', error);
+        this.isLoading = false;
+      });
+  }
+
+  @api
+  applyFilters(filters) {
+    this.filteredBooks = this.books.filter((book) => {
+      const titleMatch = !filters.title || book.Name.toLowerCase().includes(filters.title.toLowerCase());
+      const genreMatch = !filters.genre || book.GenreName === filters.genre;
+      const authorMatch =
+        !filters.author ||
+        `${book.AuthorName} ${book.AuthorSurname}`.toLowerCase().includes(filters.author.toLowerCase());
       return titleMatch && genreMatch && authorMatch;
     });
   }
 
-
   handleCardClick(event) {
-    const bookInUserCollectionId = event.currentTarget.dataset.id;
+    const bookId = event.currentTarget.dataset.id;
     this[NavigationMixin.Navigate]({
       type: 'standard__recordPage',
       attributes: {
-        recordId: bookInUserCollectionId,
-        objectApiName: 'BookInUserCollection__c',
+        recordId: bookId,
+        objectApiName: 'Book__c',
         actionName: 'view',
       },
     });

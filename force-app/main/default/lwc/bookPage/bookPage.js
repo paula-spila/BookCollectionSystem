@@ -1,31 +1,9 @@
 import { LightningElement, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
-import getBooks from '@salesforce/apex/BookController.getBooks';
 
 export default class BookPage extends NavigationMixin(LightningElement) {
   @track books = [];
-  @track columns = [
-    {
-      label: 'Grāmata',
-      fieldName: 'Name',
-      type: 'button',
-      typeAttributes: {
-        label: { fieldName: 'Name' },
-        name: 'view_record',
-        variant: 'base'
-      }
-    },
-    { label: 'Autora vārds', fieldName: 'AuthorName' },
-    { label: 'Autora uzvārds', fieldName: 'AuthorSurname' },
-    { label: 'Lappušu skaits', fieldName: 'NumberOfPages', type: 'number' },
-    { label: 'Žanrs', fieldName: 'GenreName' },
-    {
-      type: 'action',
-      typeAttributes: { rowActions: this.getRowActions.bind(this) },
-    },
-  ];
-
   @track isBookModalOpen = false;
   @track isAuthorModalOpen = false;
   @track isReviewModalOpen = false;
@@ -37,62 +15,23 @@ export default class BookPage extends NavigationMixin(LightningElement) {
     author: '',
   };
 
-  connectedCallback() {
-    this.loadBooks();
-  }
-
-  loadBooks() {
-    const { title, author, genre } = this.filters;
-    getBooks({ title, author, genre })
-      .then(result => {
-        this.books = result.map(book => ({
-          Id: book.Id,
-          Name: book.Name,
-          AuthorName: book.Author__r ? book.Author__r.Name : 'Unknown',
-          AuthorSurname: book.Author__r ? book.Author__r.Surname__c : 'Unknown',
-          NumberOfPages: book.Number_of_pages__c,
-          GenreName: book.Genre__r ? book.Genre__r.Name : 'Unknown'
-        }));
-      })
-      .catch(error => {
-        console.error('Error loading books:', error);
-        this.showError('Error loading books.');
-      });
-  }
-
-  getRowActions(row, doneCallback) {
-    const actions = [];
-    actions.push({ label: 'Apskatīt grāmatu', name: 'view_record' });
-    doneCallback(actions);
-  }
-
-  handleRowAction(event) {
-    const actionName = event.detail.action.name;
-    const row = event.detail.row;
-    if (actionName === 'view_record') {
-      this.viewRecord(row);
-    }
-  }
-
-  viewRecord(row) {
-    this[NavigationMixin.Navigate]({
-      type: 'standard__recordPage',
-      attributes: {
-        recordId: row.Id,
-        actionName: 'view'
-      }
-    });
-  }
-
   handleFilterChange(event) {
     const { filterType, filterValue } = event.detail;
     this.filters[filterType] = filterValue;
-    this.loadBooks();
+
+    const bookCard = this.template.querySelector('c-book-card');
+    if (bookCard) {
+      bookCard.applyFilters(this.filters);
+    }
   }
 
   handleClearFilters() {
     this.filters = { title: '', genre: '', author: '' };
-    this.loadBooks();
+
+    const bookCard = this.template.querySelector('c-book-card');
+    if (bookCard) {
+      bookCard.applyFilters(this.filters);
+    }
   }
 
   handleOpenBookModal() {

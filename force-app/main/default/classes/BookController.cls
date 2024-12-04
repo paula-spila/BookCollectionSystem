@@ -30,7 +30,7 @@ public with sharing class BookController {
         String authorFilter = '%' + author + '%';
         String genreFilter = '%' + genre + '%';
 
-        String query = 'SELECT Id, Name, Author__r.Name,Author__r.Surname__c, Number_of_pages__c, Genre__r.Name FROM Book__c ';
+        String query = 'SELECT Id, Name, Author__r.Name,Author__r.Surname__c, Number_of_pages__c, Book_cover__c, Genre__r.Name FROM Book__c ';
 
         Boolean hasFilter = !String.isBlank(title) || !String.isBlank(author) || !String.isBlank(genre);
 

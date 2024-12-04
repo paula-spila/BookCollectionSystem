@@ -7,35 +7,46 @@
   <template if:false={isLoading}>
     <template if:true={filteredBooks}>
       <div class="book-cards-container">
+
         <template for:each={filteredBooks}
-                  for:item="book">
-          <div key={book.Id}
-               class="book-card"
-               data-id={book.Id}
+                  for:item="bookEntry">
+          <div key={bookEntry.Id}
+               class="book-card slds-box slds-theme_default"
+               data-id={bookEntry.Id}
                onclick={handleCardClick}>
+
             <div class="book-cover-container">
-              <template if:true={book.BookCover}>
-                <img src={book.BookCover}
+              <template if:true={bookEntry.Book__r.Book_cover__c}>
+                <img src={bookEntry.Book__r.Book_cover__c}
                      alt="Book Cover"
                      class="book-cover" />
               </template>
-              <template if:false={book.BookCover}>
+              <template if:false={bookEntry.Book__r.Book_cover__c}>
                 <img src="https://placeholder6-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Png&versionId=068d20000025O8b&operationContext=CHATTER&contentId=05Td2000002Osvl"
                      alt="Default Book Cover"
                      class="book-cover" />
               </template>
             </div>
+
             <div class="book-details-container">
-              <h3 class="book-title">{book.Name}</h3>
-              <p class="book-author">{book.AuthorName} {book.AuthorSurname}</p>
-              <p class="book-genre">{book.GenreName}</p>
+              <h3 class="book-title">{bookEntry.Book__r.Name}</h3>
+              <p class="book-author">{bookEntry.Book__r.Author__r.Name} {bookEntry.Book__r.Author__r.Surname__c}</p>
+              <p class="book-status">
+                <template if:true={bookEntry.Reading_status__c}>
+                  {bookEntry.Reading_status__c}
+                </template>
+              </p>
             </div>
+
           </div>
         </template>
+
       </div>
     </template>
+
     <template if:false={filteredBooks}>
       <p>No books match the selected filters.</p>
     </template>
+
   </template>
 </template>

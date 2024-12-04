@@ -53,7 +53,7 @@ export default class BookInUserCollectionPage extends LightningElement {
   }
 
   applyFiltersToActiveTab() {
-    const bookCard = this.template.querySelector('c-book-card');
+    const bookCard = this.template.querySelector('c-collection-book-card');
     if (bookCard) {
       bookCard.applyFilters(this.filters);
     }
