@@ -1,30 +1,20 @@
 public with sharing class BookReviewController {
     @AuraEnabled
-    public static Id addReview(Id bookId, String reviewName, Date dateOfReview, Integer rating, String reviewText) {
-        if (bookId == null) {
+    public static Id addReview(Id book, Integer rating, String reviewText) {
+        if (book == null) {
             throw new AuraHandledException('Missing required field: Book.');
         }
-        if (String.isBlank(reviewName)) {
-            throw new AuraHandledException('Missing required field: Review Name.');
-        }
 
-        if (reviewName.length() > 80) {
-            throw new AuraHandledException('Review Name should not exceed 80 characters.');
-        }
         if (reviewText != null && reviewText.length() > 3000) {
             throw new AuraHandledException('Review Text should not exceed 3000 characters.');
         }
         if (rating != null && (rating < 0 || rating > 5)) {
             throw new AuraHandledException('Rating should be between 0 and 5.');
         }
-        if (dateOfReview != null && dateOfReview > Date.today()) {
-            throw new AuraHandledException('Date of Review cannot be in the future.');
-        }
 
         Book_Review__c newReview = new Book_Review__c(
-            Book__c = bookId,
-            Name = reviewName,
-            Date_of_review__c = dateOfReview,
+            Book__c = book,
+            Date_of_review__c = Date.today(),
             Rating__c = rating,
             Review_text__c = reviewText
         );
@@ -37,5 +27,20 @@ public with sharing class BookReviewController {
         }
 
         return newReview.Id;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Book_Review__c> getBookReviews(Id bookId) {
+        try {
+            // Query for reviews related to the book
+            return [
+                SELECT Id, CreatedBy.Name, Review_text__c, Rating__c
+                FROM Book_Review__c
+                WHERE Book__c = :bookId
+                ORDER BY CreatedDate DESC
+            ];
+        } catch (Exception ex) {
+            throw new AuraHandledException('Error fetching book reviews: ' + ex.getMessage());
+        }
     }
 }

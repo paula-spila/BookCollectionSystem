@@ -1,0 +1,24 @@
+<template>
+  <div class="more-books">
+    <h2>Vairak grāmatas no {authorName} {authorSurname}</h2>
+    <template if:true={books}>
+      <div class="books-scroll-container">
+        <template for:each={books}
+                  for:item="book">
+          <div key={book.Id}
+               class="other-book"
+               data-id={book.Id}
+               onclick={handleBookClick}>
+            <img src={book.BookCover}
+                 alt={book.Name}
+                 class="other-book-cover" />
+            <p class="other-book-title">{book.Name}</p>
+          </div>
+        </template>
+      </div>
+    </template>
+    <template if:false={books}>
+      <p>Nav pieejaas vairāk grāmatas no šī autora.</p>
+    </template>
+  </div>
+</template>

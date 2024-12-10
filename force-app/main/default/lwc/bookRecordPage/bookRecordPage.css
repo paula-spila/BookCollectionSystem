@@ -1,0 +1,71 @@
+.page-container {
+  background-color: #ffffff;
+  padding: 30px 50px;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+.book-cover-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.book-cover {
+  max-width: 70%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.book-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.details-section {
+  padding: 20px;
+}
+
+.book-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.author,
+.genre,
+.meta {
+  font-size: 1rem;
+  color: #555;
+  margin: 10px 0;
+}
+
+.book-description h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.book-description p {
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #555;
+}
+
+.edit-button {
+  float: right;
+  margin-bottom: 20px;
+}
+
+.right-section {
+  padding-left: 20px;
+}
+
+.more-books-section {
+  margin-bottom: 20px;
+  padding: 15px;
+}
+
+.reviews-section {
+  padding: 15px;
+}

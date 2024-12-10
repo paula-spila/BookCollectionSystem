@@ -1,93 +1,72 @@
 import { LightningElement, track, api } from 'lwc';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import addReview from '@salesforce/apex/BookReviewController.addReview';
-import getBookOptions from '@salesforce/apex/BookController.getBookOptions';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class AddBookReviewForm extends LightningElement {
-
-  @track bookOptions = [];
-  @track book = '';
-  @track reviewName = '';
-  @track dateOfReview = '';
-  @track rating = '';
-  @track reviewText = '';
-  @api isOpen = false;
-
-  @api openModal() {
-    this.isOpen = true;
-  }
-
-  connectedCallback() {
-    this.loadBookOptions();
-  }
-
-  handleClose() {
-    this.isOpen = false;
-  }
+  @api isOpen;
+  @api book;
+  @track rating;
+  @track reviewText;
 
   handleInputChange(event) {
     const field = event.target.dataset.id;
-    this[field] = event.target.value;
+    if (field === 'rating') {
+      this.rating = event.target.value;
+    } else if (field === 'reviewText') {
+      this.reviewText = event.target.value;
+    }
   }
 
-  handleBookChange(event) {
-    this.book = event.detail.value;
-  }
-
-  loadBookOptions() {
-    getBookOptions()
-      .then(result => {
-        this.bookOptions = result.map(option => ({
-          label: option.label,
-          value: option.value
-        }));
-      })
-      .catch(error => {
-        this.showError('Error loading books: ' + (error.body ? error.body.message : error.message));
-      });
+  handleClose() {
+    try {
+      this.dispatchEvent(new CustomEvent('close', {
+        bubbles: true,
+        composed: true,
+      }));
+    } catch (error) {
+      console.error('Error in handleClose:', error);
+    }
   }
 
   handleSave() {
-    if (!this.book || !this.reviewName) {
-      this.showError('Please fill in all required fields: Book and Book Review Name.');
+    if (!this.rating || this.rating < 0 || this.rating > 5) {
+      this.showToast('Error', 'Please provide a rating between 0 and 5.', 'error');
+      return;
+    }
+
+    if (!this.book || !this.book.Id) {
+      this.showToast('Error', 'Book information is missing.', 'error');
+      console.error('Missing book:', this.book);
       return;
     }
 
     addReview({
-      bookId: this.book,
-      reviewName: this.reviewName,
-      dateOfReview: this.dateOfReview || null,
-      rating: this.rating ? parseInt(this.rating, 10) : null,
-      reviewText: this.reviewText || null
+      book: this.book.Id,
+      rating: this.rating,
+      reviewText: this.reviewText
     })
       .then(() => {
-        this.isOpen = false;
+        this.showToast('Success', 'Review added successfully!', 'success');
+        this.handleClose();
         this.dispatchEvent(new CustomEvent('reviewadded'));
-        this.showSuccess('Review has been added successfully');
       })
-      .catch(error => {
-        console.error('Error:', error);
-        this.showError('Error saving review: ' + (error.body ? error.body.message : error.message));
+      .catch((error) => {
+        console.error('Error saving review:', error);
+        this.showToast('Error', 'Failed to save review.', 'error');
       });
   }
 
-  showSuccess(message) {
-    this.dispatchEvent(
-      new ShowToastEvent({
-        title: 'Success',
+  showToast(title, message, variant) {
+    try {
+      const event = new ShowToastEvent({
+        title: title,
         message: message,
-        variant: 'success'
-      })
-    );
+        variant: variant,
+      });
+      this.dispatchEvent(event);
+    } catch (toastError) {
+      console.error('Error showing toast:', toastError);
+    }
   }
 
-  showError(message) {
-    this.dispatchEvent(
-      new ShowToastEvent({
-        title: 'Error',
-        message: message,
-        variant: 'error'
-      })
-    );
-  }
 }

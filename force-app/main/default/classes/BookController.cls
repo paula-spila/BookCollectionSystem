@@ -103,4 +103,30 @@ public with sharing class BookController {
 
         return newBook.Id;
     }
+
+    @AuraEnabled(cacheable=true)
+    public static Book__c getBookDetails(Id bookId) {
+        try {
+            // Query for book details
+            return [
+                SELECT Id, Name, Number_of_pages__c, Publication_date__c, Description__c, 
+                       Book_cover__c, Author__c, Author__r.Name, Author__r.Surname__c, Genre__r.Name
+                FROM Book__c
+                WHERE Id = :bookId
+            ];
+        } catch (Exception ex) {
+            throw new AuraHandledException('Error fetching book details: ' + ex.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static List<Book__c> getBooksByAuthor(Id authorId) {
+        return [
+            SELECT Id, Name, Book_cover__c
+            FROM Book__c
+            WHERE Author__c = :authorId
+            ORDER BY Name ASC
+        ];
+    }
+
 }
