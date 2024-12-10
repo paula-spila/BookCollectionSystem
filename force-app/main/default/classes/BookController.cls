@@ -129,4 +129,37 @@ public with sharing class BookController {
         ];
     }
 
+    @AuraEnabled
+    public static void updateBook(Book__c book) {
+        if (book == null || String.isBlank(book.Id)) {
+            throw new AuraHandledException('Grāmatas ID ir obligāts.');
+        }
+
+        if (String.isBlank(book.Name)) {
+            throw new AuraHandledException('Grāmatas nosaukums ir obligāts.');
+        }
+
+        if (book.Number_of_pages__c != null && book.Number_of_pages__c < 0) {
+            throw new AuraHandledException('Lappušu skaits nevar būt negatīvs.');
+        }
+
+        if (book.Publication_date__c != null && book.Publication_date__c > Date.today()) {
+            throw new AuraHandledException('Publicēšanas datums nevar būt nākotnē.');
+        }
+
+        if (book.Description__c != null && book.Description__c.length() > 5000) {
+            throw new AuraHandledException('Grāmatas apraksts nevar būt garāks par 5000 rakstzīmēm.');
+        }
+        if (book.Book_cover__c != null && book.Book_cover__c.length() > 255) {
+            throw new AuraHandledException('Grāmatas vāka URL nevar būt garāks par 255 rakstzīmēm.');
+        }
+
+        try {
+            update book;
+        } catch (Exception e) {
+            throw new AuraHandledException('Kļūda atjauninot grāmatu: ' + e.getMessage());
+        }
+    }
+
+
 }
