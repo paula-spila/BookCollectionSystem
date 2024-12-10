@@ -1,0 +1,53 @@
+<template>
+  <template if:true={book}>
+    <div class="page-container">
+      <div class="slds-grid slds-wrap slds-gutters">
+
+        <div class="slds-col slds-size_3-of-12">
+          <div class="book-cover-container">
+            <img src={book.BookCover}
+                 alt="Grāmatas vāks"
+                 class="book-cover" />
+            <div class="book-actions">
+              <button class="slds-button slds-button_brand">Pievienot vēlmju sarakstam</button>
+              <button class="slds-button slds-button_success">Pievienot kolekcijai</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="slds-col slds-size_6-of-12">
+          <div class="details-section">
+            <button class="slds-button slds-button_neutral edit-button">Rediģēt grāmatu</button>
+            <h1 class="book-title">{book.Name}</h1>
+            <p class="author">Autors: {book.AuthorName} {book.AuthorSurname}</p>
+            <p class="genre">Žanrs: {book.GenreName}</p>
+            <p class="meta">{book.NumberOfPages} lappuses | Publicēta: {book.PublicationDate}</p>
+            <div class="book-description">
+              <h2>Apraksts</h2>
+              <p>{book.Description}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slds-col slds-size_3-of-12">
+          <div class="more-books-section">
+            <c-books-by-author-component author-id={authorId}
+                                         author-name={book.AuthorName}
+                                         author-surname={book.AuthorSurname}></c-books-by-author-component>
+          </div>
+          <div class="reviews-section">
+            <c-reviews-component reviews={reviews}
+                                 book={book}
+                                 onrefreshreviews={refreshReviews}></c-reviews-component>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template if:false={book}>
+    <div class="loading-message">
+      <p>Ielādē grāmatas detaļas...</p>
+    </div>
+  </template>
+</template>

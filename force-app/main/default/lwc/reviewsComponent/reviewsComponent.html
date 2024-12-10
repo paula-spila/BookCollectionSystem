@@ -1,0 +1,34 @@
+<template>
+  <div class="reviews">
+    <!-- Reviews Section Header -->
+    <div class="slds-grid slds-wrap slds-align_absolute-center">
+      <h2 class="slds-col slds-size_7-of-12">Atsauksmes</h2>
+      <button class="slds-button slds-button_neutral slds-col slds-size_5-of-12"
+              onclick={handleOpenReviewForm}>
+        Pievienot atsauksmi
+      </button>
+    </div>
+
+    <!-- Reviews List -->
+    <template if:true={reviews}>
+      <template for:each={reviews}
+                for:item="review">
+        <div key={review.Id}
+             class="review">
+          <p><strong>{review.ReviewerName}:</strong> {review.ReviewText}</p>
+          <p>Vērtējums: {review.Rating}/5</p>
+        </div>
+      </template>
+    </template>
+    <template if:false={reviews}>
+      <p>Nav pieejamas atsauksmes par šo grāmatu.</p>
+    </template>
+
+    <!-- Review Form Modal (Child Component) -->
+    <c-add-book-review-form is-open={isReviewModalOpen}
+                            book={book}
+                            onclose={handleReviewModalClose}
+                            onreviewadded={refreshReviews}>
+    </c-add-book-review-form>
+  </div>
+</template>
