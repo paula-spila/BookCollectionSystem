@@ -7,6 +7,7 @@ export default class BookRecordPage extends LightningElement {
   @track book;
   @track reviews = [];
   @track authorId;
+  @track isEditModalOpen = false;
 
   connectedCallback() {
     this.loadBookDetails();
@@ -62,7 +63,18 @@ export default class BookRecordPage extends LightningElement {
     console.log('Add to Collection functionality');
   }
 
-  editBook() {
-    console.log('Edit book functionality');
+  openEditModal() {
+    this.isEditModalOpen = true;
   }
+
+  closeEditModal() {
+    this.isEditModalOpen = false;
+    this.loadBookDetails();
+  }
+
+  handleBookUpdated() {
+    this.loadBookDetails();
+    this.isEditModalOpen = false;
+  }
+
 }
