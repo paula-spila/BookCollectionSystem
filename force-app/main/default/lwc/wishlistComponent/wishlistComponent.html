@@ -1,0 +1,46 @@
+<template>
+  <template if:true={isLoading}>
+    <lightning-spinner alternative-text="Loading wishlist books..."
+                       size="medium"></lightning-spinner>
+  </template>
+
+  <template if:false={isLoading}>
+    <template if:true={filteredBooks}>
+      <div class="book-cards-container">
+        <template for:each={filteredBooks}
+                  for:item="bookEntry">
+          <div key={bookEntry.Id}
+               class="book-card slds-box slds-theme_default"
+               data-id={bookEntry.BookId}
+               onclick={handleCardClick}>
+
+            <div class="book-cover-container">
+              <template if:true={bookEntry.BookCover}>
+                <img src={bookEntry.BookCover}
+                     alt="Book Cover"
+                     class="book-cover" />
+              </template>
+              <template if:false={bookEntry.BookCover}>
+                <img src="https://placeholder6-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Png&versionId=068d20000025O8b&operationContext=CHATTER&contentId=05Td2000002Osvl"
+                     alt="Default Book Cover"
+                     class="book-cover" />
+              </template>
+            </div>
+
+            <div class="book-details-container">
+              <h3 class="book-title">{bookEntry.Name}</h3>
+              <p class="book-author">{bookEntry.AuthorName} {bookEntry.AuthorSurname}</p>
+              <p class="book-status">{bookEntry.GenreName}</p>
+              <p class="book-status"><strong>Pievienota:</strong> {bookEntry.DateAdded}</p>
+            </div>
+
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <template if:false={filteredBooks}>
+      <p class="no-books">Nav grāmatu vēlmju sarakstā.</p>
+    </template>
+  </template>
+</template>

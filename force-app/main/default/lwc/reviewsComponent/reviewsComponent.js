@@ -10,15 +10,17 @@ export default class ReviewsComponent extends LightningElement {
   }
 
   handleReviewModalClose() {
-    try {
-      this.isReviewModalOpen = false;
-    } catch (error) {
-      console.error('Error closing the modal:', error);
-    }
+    this.isReviewModalOpen = false;
   }
 
   refreshReviews() {
-    const refreshEvent = new CustomEvent('refreshreviews');
+    if (!this.book) {
+      console.error('Book information is missing, cannot refresh reviews.');
+      return;
+    }
+    const refreshEvent = new CustomEvent('refreshreviews', {
+      detail: { bookId: this.book.Id },
+    });
     this.dispatchEvent(refreshEvent);
   }
 }

@@ -21,6 +21,10 @@ export default class BookInUserCollectionPage extends LightningElement {
     return this.activeTab === 'wantToRead';
   }
 
+  get isWishlist() {
+    return this.activeTab === 'wishlist';
+  }
+
   handleTabChange(event) {
     const selectedTab = event.target.label;
 
@@ -30,6 +34,8 @@ export default class BookInUserCollectionPage extends LightningElement {
       this.activeTab = 'readBooks';
     } else if (selectedTab.includes('Gribu izlasīt')) {
       this.activeTab = 'wantToRead';
+    } else if (selectedTab.includes('Vēlmju saraksts')) {
+      this.activeTab = 'wishlist';
     }
 
     this.applyFiltersToActiveTab();
@@ -53,9 +59,12 @@ export default class BookInUserCollectionPage extends LightningElement {
   }
 
   applyFiltersToActiveTab() {
-    const bookCard = this.template.querySelector('c-collection-book-card');
-    if (bookCard) {
-      bookCard.applyFilters(this.filters);
+    const activeComponent = this.template.querySelector(
+      this.isWishlist ? 'c-wishlist-component' : 'c-collection-book-card'
+    );
+
+    if (activeComponent) {
+      activeComponent.applyFilters(this.filters);
     }
   }
 }

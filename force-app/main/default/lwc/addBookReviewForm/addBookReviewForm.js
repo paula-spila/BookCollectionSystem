@@ -49,6 +49,7 @@ export default class AddBookReviewForm extends LightningElement {
         this.showToast('Success', 'Review added successfully!', 'success');
         this.handleClose();
         this.dispatchEvent(new CustomEvent('reviewadded'));
+        location.reload();
       })
       .catch((error) => {
         console.error('Error saving review:', error);

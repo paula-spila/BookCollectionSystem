@@ -50,10 +50,17 @@
                 </template>
               </lightning-tab>
 
+              <lightning-tab label="💖 Vēlmju saraksts"
+                             onactive={handleTabChange}
+                             class="custom-tab">
+                <template if:true={isWishlist}>
+                  <c-wishlist-component filters={filters}></c-wishlist-component>
+                </template>
+              </lightning-tab>
+
             </lightning-tabset>
           </div>
         </div>
-
       </div>
     </div>
   </lightning-card>
