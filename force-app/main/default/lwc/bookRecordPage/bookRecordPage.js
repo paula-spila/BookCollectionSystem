@@ -1,6 +1,10 @@
 import { LightningElement, api, track } from 'lwc';
 import getBookDetails from '@salesforce/apex/BookController.getBookDetails';
 import getBookReviews from '@salesforce/apex/BookReviewController.getBookReviews';
+import addToWishlist from '@salesforce/apex/WishlistController.addToWishlist';
+import isBookInWishlist from '@salesforce/apex/WishlistController.isBookInWishlist';
+import removeFromWishlist from '@salesforce/apex/WishlistController.removeFromWishlist';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class BookRecordPage extends LightningElement {
   @api recordId;
@@ -8,14 +12,25 @@ export default class BookRecordPage extends LightningElement {
   @track reviews = [];
   @track authorId;
   @track isEditModalOpen = false;
+  @track isInWishlist = false;
+  @track isAddToCollectionModalOpen = false;
+  @track isLoading = true;
 
   connectedCallback() {
-    this.loadBookDetails();
-    this.loadBookReviews();
+    this.loadData();
+  }
+
+  loadData() {
+    this.isLoading = true;
+    Promise.all([this.loadBookDetails(), this.loadBookReviews(), this.checkWishlistStatus()])
+      .catch((error) => console.error('Error loading data:', error))
+      .finally(() => {
+        this.isLoading = false;
+      });
   }
 
   loadBookDetails() {
-    getBookDetails({ bookId: this.recordId })
+    return getBookDetails({ bookId: this.recordId })
       .then((data) => {
         this.book = {
           Id: data.Id,
@@ -29,14 +44,11 @@ export default class BookRecordPage extends LightningElement {
           BookCover: data.Book_cover__c || 'https://placeholder6-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Png&versionId=068d20000025O8b&operationContext=CHATTER&contentId=05Td2000002Osvl',
         };
         this.authorId = data.Author__c;
-      })
-      .catch((error) => {
-        console.error('Error fetching book details:', error);
       });
   }
 
   loadBookReviews() {
-    getBookReviews({ bookId: this.recordId })
+    return getBookReviews({ bookId: this.recordId })
       .then((data) => {
         this.reviews = data.map((review) => ({
           Id: review.Id,
@@ -44,23 +56,46 @@ export default class BookRecordPage extends LightningElement {
           ReviewText: review.Review_text__c,
           Rating: review.Rating__c,
         }));
-      })
-      .catch((error) => {
-        console.error('Error fetching reviews:', error);
       });
   }
 
-  refreshReviews() {
-    this.loadBookReviews();
+  checkWishlistStatus() {
+    return isBookInWishlist({ bookId: this.recordId })
+      .then((result) => {
+        this.isInWishlist = result;
+      });
   }
 
-  // Action handlers
-  addToWishlist() {
-    console.log('Add to Wishlist functionality');
+  handleAddToWishlist() {
+    addToWishlist({ bookId: this.book.Id })
+      .then(() => {
+        this.isInWishlist = true;
+        this.showToast('Veiksme!', 'Grāmata veiksmīgi pievienota vēlmju sarakstam.', 'success');
+      })
+      .catch((error) => {
+        this.showToast('Kļūda!', 'Neizdevās pievienot grāmatu vēlmju sarakstam.', 'error');
+        console.error('Error adding book to wishlist:', error);
+      });
   }
 
-  addToCollection() {
-    console.log('Add to Collection functionality');
+  handleRemoveFromWishlist() {
+    removeFromWishlist({ bookId: this.book.Id })
+      .then(() => {
+        this.isInWishlist = false;
+        this.showToast('Veiksme!', 'Grāmata veiksmīgi noņemta no vēlmju saraksta.', 'success');
+      })
+      .catch((error) => {
+        this.showToast('Kļūda!', 'Neizdevās noņemt grāmatu no vēlmju saraksta.', 'error');
+        console.error('Error removing book from wishlist:', error);
+      });
+  }
+
+  openAddToCollection() {
+    this.isAddToCollectionModalOpen = true;
+  }
+
+  closeAddToCollectionModal() {
+    this.isAddToCollectionModalOpen = false;
   }
 
   openEditModal() {
@@ -77,4 +112,18 @@ export default class BookRecordPage extends LightningElement {
     this.isEditModalOpen = false;
   }
 
+  handleBookAddedToCollection() {
+    this.isAddToCollectionModalOpen = false;
+    if (this.isInWishlist) {
+      this.handleRemoveFromWishlist();
+    }
+  }
+
+  handleRefreshReviews() {
+    this.loadBookReviews();
+  }
+
+  showToast(title, message, variant) {
+    this.dispatchEvent(new ShowToastEvent({ title, message, variant }));
+  }
 }

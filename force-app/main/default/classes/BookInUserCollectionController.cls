@@ -83,4 +83,39 @@ public with sharing class BookInUserCollectionController {
         update book;
     }
 
+    @AuraEnabled
+    public static void addToCollection(Id bookId, String readingStatus, Date dateBought, String isbn) {
+        if (bookId == null) {
+            throw new AuraHandledException('Book ID is required.');
+        }
+        if (String.isBlank(readingStatus)) {
+            throw new AuraHandledException('Reading status is required.');
+        }
+
+        if (dateBought == null) {
+            dateBought = Date.today();
+        }
+
+        if (dateBought > Date.today()) {
+            throw new AuraHandledException('Date bought cannot be in the future.');
+        }
+
+        BookInUserCollection__c newCollectionEntry = new BookInUserCollection__c(
+            Book__c = bookId,
+            Reading_status__c = readingStatus,
+            Date_bought__c = dateBought,
+            ISBN__c = isbn,
+            User__c = UserInfo.getUserId(),
+            Times_read__c = readingStatus == 'Read' ? 1 : 0,
+            Current_page__c = 0
+        );
+
+        try {
+            insert newCollectionEntry;
+        } catch (Exception e) {
+            System.debug('Error adding book to collection: ' + e.getMessage());
+            throw new AuraHandledException('Error adding book to collection: ' + e.getMessage());
+        }
+    }
+
 }
