@@ -1,0 +1,101 @@
+<template>
+  <template if:true={isOpen}>
+    <section class="slds-modal slds-fade-in-open">
+      <div class="slds-modal__container">
+        <header class="slds-modal__header">
+          <h2 class="slds-text-heading_medium">Rediģēt kolekcijas grāmatu</h2>
+          <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                  title="Aizvērt"
+                  onclick={closeModal}>
+            <lightning-icon icon-name="utility:close"
+                            alternative-text="Aizvērt"
+                            variant="inverse"></lightning-icon>
+          </button>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium">
+          <lightning-layout>
+            <lightning-layout-item size="6"
+                                   padding="around-small">
+              <lightning-input label="Pašreizējā lapa"
+                               type="number"
+                               value={collection.CurrentPage}
+                               onchange={handleInputChange}
+                               data-id="CurrentPage"></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="6"
+                                   padding="around-small">
+              <lightning-input label="Reizes izlasīta"
+                               type="number"
+                               value={collection.TimesRead}
+                               onchange={handleInputChange}
+                               data-id="TimesRead"></lightning-input>
+            </lightning-layout-item>
+          </lightning-layout>
+
+          <lightning-layout>
+            <lightning-layout-item size="6"
+                                   padding="around-small">
+              <lightning-input label="Datums, kad sāka lasīt"
+                               type="date"
+                               value={collection.DateStarted}
+                               onchange={handleInputChange}
+                               data-id="DateStarted"></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="6"
+                                   padding="around-small">
+              <lightning-input label="Datums, kad pabeidza lasīt"
+                               type="date"
+                               value={collection.DateFinished}
+                               onchange={handleInputChange}
+                               data-id="DateFinished">
+              </lightning-input>
+
+            </lightning-layout-item>
+          </lightning-layout>
+
+          <lightning-layout>
+            <lightning-layout-item size="6"
+                                   padding="around-small">
+              <lightning-combobox label="Formāts"
+                                  placeholder="Izvēlies formātu"
+                                  value={collection.Format}
+                                  options={formatOptions}
+                                  onchange={handleInputChange}
+                                  data-id="Format">
+              </lightning-combobox>
+
+            </lightning-layout-item>
+            <lightning-layout-item size="6"
+                                   padding="around-small">
+              <lightning-combobox label="Lasīšanas statuss"
+                                  placeholder="Izvēlies lasīšanas statusu"
+                                  value={collection.ReadingStatus}
+                                  options={readingStatusOptions}
+                                  onchange={handleInputChange}
+                                  data-id="ReadingStatus">
+              </lightning-combobox>
+            </lightning-layout-item>
+          </lightning-layout>
+
+          <lightning-layout>
+            <lightning-layout-item size="12"
+                                   padding="around-small">
+              <lightning-input label="ISBN"
+                               type="text"
+                               value={collection.ISBN}
+                               onchange={handleInputChange}
+                               data-id="ISBN"></lightning-input>
+            </lightning-layout-item>
+          </lightning-layout>
+        </div>
+        <footer class="slds-modal__footer">
+          <button class="slds-button slds-button_neutral"
+                  onclick={closeModal}>Atcelt</button>
+          <button class="slds-button slds-button_brand"
+                  onclick={saveChanges}>Saglabāt</button>
+        </footer>
+      </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </template>
+</template>

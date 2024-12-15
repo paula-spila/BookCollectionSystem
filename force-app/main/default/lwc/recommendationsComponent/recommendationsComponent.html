@@ -1,0 +1,30 @@
+<template>
+  <div class="recommendations">
+    <h2>Ieteiktās grāmatas pēc žanra</h2>
+    <template if:true={recommendedBooks}>
+      <template if:true={recommendedBooks.length}>
+        <div class="books-scroll-container">
+          <template for:each={recommendedBooks}
+                    for:item="book">
+            <div key={book.Id}
+                 class="other-book"
+                 data-id={book.Id}
+                 onclick={handleBookClick}>
+              <img src={book.BookCover}
+                   alt={book.Name}
+                   class="other-book-cover" />
+              <p class="other-book-title">{book.Name}</p>
+              <p class="other-book-author">{book.AuthorName} {book.AuthorSurname}</p>
+            </div>
+          </template>
+        </div>
+      </template>
+      <template if:false={recommendedBooks.length}>
+        <p>Nav ieteiktu grāmatu šajā žanrā.</p>
+      </template>
+    </template>
+    <template if:false={recommendedBooks}>
+      <p>Nav ieteiktu grāmatu šajā žanrā.</p>
+    </template>
+  </div>
+</template>

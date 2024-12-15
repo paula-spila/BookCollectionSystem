@@ -1,63 +1,58 @@
 public with sharing class LendingHistoryController {
+
+    @AuraEnabled(cacheable=true)
+    public static List<Lending_History__c> getLendingHistory(Id bookCollectionId) {
+        if (String.isBlank(bookCollectionId)) {
+            throw new AuraHandledException('The book collection ID is required.');
+        }
+        try {
+            return [
+                SELECT Id, Lender_name__c, Lending_date__c, Return_date__c, Return_status__c
+                FROM Lending_History__c
+                WHERE BookInUserCollection__c = :bookCollectionId
+                ORDER BY Lending_date__c DESC
+            ];
+        } catch (Exception e) {
+            throw new AuraHandledException('Error fetching lending history: ' + e.getMessage());
+        }
+    }
+
     @AuraEnabled
-    public static Id createLending(Id bookId, String lendingHistoryName, Date lendingDate, Date returnDate, String returnStatus) {
-        if (bookId == null || String.isBlank(lendingHistoryName)) {
-            throw new AuraHandledException('Missing required fields: Book and Lending History Name.');
+    public static void createLending(Id bookCollectionId, String lenderName, Date lendingDate, String returnStatus) {
+        if (String.isBlank(bookCollectionId) || String.isBlank(lenderName) || lendingDate == null) {
+            throw new AuraHandledException('All required fields must be provided.');
         }
-
-        if (bookId == null) {
-            throw new AuraHandledException('Missing required field: Book.');
-        }
-        if (String.isBlank(lendingHistoryName)) {
-            throw new AuraHandledException('Missing required field: Lending History Name.');
-        }
-    
-        if (lendingDate != null && lendingDate > Date.today()) {
-            throw new AuraHandledException('Lending date cannot be in the future.');
-        }
-        if (returnDate != null && returnDate < lendingDate) {
-            throw new AuraHandledException('Return date cannot be earlier than the lending date.');
-        }
-    
-        if (returnDate != null && String.isBlank(returnStatus)) {
-            throw new AuraHandledException('Return status must be provided if return date is set.');
-        }
-    
-        if (lendingHistoryName.length() > 80) {
-            throw new AuraHandledException('Lending History Name should not exceed 80 characters.');
-        }
-
-        Lending_History__c newLending = new Lending_History__c(
-            //Book__c = bookId,
-            Name = lendingHistoryName,
-            Lending_date__c = lendingDate,
-            Return_date__c = returnDate,
-            Return_status__c = returnStatus
-        );
 
         try {
+            Lending_History__c newLending = new Lending_History__c();
+            newLending.BookInUserCollection__c = bookCollectionId;
+            newLending.Lender_name__c = lenderName;
+            newLending.Lending_date__c = lendingDate;
+            newLending.Return_status__c = returnStatus;
             insert newLending;
-        } catch (Exception e) {
-            System.debug('Exception: ' + e.getMessage());
-            throw new AuraHandledException('Error creating new lending: ' + e.getMessage());
+        } catch (DmlException e) {
+            throw new AuraHandledException('Error creating lending record: ' + e.getMessage());
         }
-
-        return newLending.Id;
     }
 
     @AuraEnabled
-    public static List<Map<String, String>> getReturnStatusOptions() {
-        List<Map<String, String>> options = new List<Map<String, String>>();
-        Schema.DescribeFieldResult fieldResult = Lending_History__c.Return_status__c.getDescribe();
-        List<Schema.PicklistEntry> picklistValues = fieldResult.getPicklistValues();
-
-        for (Schema.PicklistEntry entry : picklistValues) {
-            Map<String, String> option = new Map<String, String>();
-            option.put('label', entry.getLabel());
-            option.put('value', entry.getValue());
-            options.add(option);
+    public static void markAsReturned(Id lendingId) {
+        if (String.isBlank(lendingId)) {
+            throw new AuraHandledException('Lending record ID ir nepieciešams.');
         }
 
-        return options;
+        try {
+            Lending_History__c record = [SELECT Id, Return_status__c, Return_date__c
+                                        FROM Lending_History__c
+                                        WHERE Id = :lendingId
+                                        LIMIT 1];
+
+            record.Return_status__c = 'Returned';
+            record.Return_date__c = Date.today();
+            update record;
+        } catch (Exception e) {
+            throw new AuraHandledException('Kļūda atjauninot aizņemšanās ierakstu: ' + e.getMessage());
+        }
     }
+
 }

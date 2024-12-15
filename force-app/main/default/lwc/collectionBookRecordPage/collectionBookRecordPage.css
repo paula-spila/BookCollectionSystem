@@ -1,0 +1,97 @@
+.page-container {
+  background-color: #ffffff;
+  padding: 30px;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+.cover-section {
+  text-align: center;
+  padding: 20px;
+}
+
+.book-cover {
+  max-width: 70%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.book-details,
+.collection-details {
+  background-color: #f9f9f9;
+  border: 1px solid #d8dde6;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.book-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.book-title {
+  font-size: 1.75rem;
+  margin: 0;
+  color: #2d2d2d;
+}
+
+.book-meta {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.edit-button {
+  align-self: flex-end;
+}
+
+.collection-details h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.details-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.details-list li {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+
+.section-container {
+  background-color: #f3f3f3;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.progress-tracker {
+  margin-bottom: 20px;
+}
