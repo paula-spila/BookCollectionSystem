@@ -65,7 +65,6 @@ public with sharing class BookInUserCollectionController {
         }
     }
 
-
     @AuraEnabled
     public static void markBookAsCompleted(Id bookId) {
         BookInUserCollection__c book = [
@@ -116,6 +115,115 @@ public with sharing class BookInUserCollectionController {
             System.debug('Error adding book to collection: ' + e.getMessage());
             throw new AuraHandledException('Error adding book to collection: ' + e.getMessage());
         }
+    }
+
+    @AuraEnabled
+    public static BookInUserCollection__c getBookCollectionDetails(Id recordId) {
+        if (String.isBlank(recordId)) {
+            throw new AuraHandledException('The record ID is required.');
+        }
+
+        try {
+            return [
+                SELECT Id,
+                       Book__c,
+                       Book__r.Name, 
+                       Book__r.Author__r.Name, 
+                       Book__r.Author__r.Surname__c,
+                       Book__r.Genre__r.Name,
+                       Book__r.Book_cover__c,
+                       Book__r.Number_of_pages__c,
+                       Current_page__c,
+                       Times_read__c,
+                       Date_started__c,
+                       Date_finished__c,
+                       Date_bought__c,
+                       ISBN__c,
+                       Format__c,
+                       Reading_status__c
+                FROM BookInUserCollection__c
+                WHERE Id = :recordId
+            ];
+        } catch (Exception e) {
+            System.debug('Error fetching BookInUserCollection record: ' + e.getMessage());
+            throw new AuraHandledException('Error fetching the book collection details.');
+        }
+    }
+
+    @AuraEnabled
+    public static void updateBookCollection(BookInUserCollection__c bookInUserCollection) {
+        if (bookInUserCollection.Date_started__c != null) {
+            if (bookInUserCollection.Date_started__c > Date.today()) {
+                throw new AuraHandledException('Datums, kad sāka lasīt, nevar būt nākotnē.');
+            }
+        } else {
+            bookInUserCollection.Date_started__c = null;
+        }
+
+        if (bookInUserCollection.Date_finished__c != null) {
+            if (bookInUserCollection.Date_finished__c > Date.today()) {
+                throw new AuraHandledException('Datums, kad pabeidza lasīt, nevar būt nākotnē.');
+            }
+        } else {
+            bookInUserCollection.Date_finished__c = null;
+        }
+
+        if (bookInUserCollection.Format__c == 'Nav norādīts' || String.isBlank(bookInUserCollection.Format__c)) {
+            bookInUserCollection.Format__c = null;
+        }
+
+        if (bookInUserCollection.Reading_status__c == 'Nav' || String.isBlank(bookInUserCollection.Reading_status__c)) {
+            bookInUserCollection.Reading_status__c = null;
+        }
+
+        try {
+            update bookInUserCollection;
+        } catch (Exception e) {
+            throw new AuraHandledException('Kļūda atjauninot grāmatu kolekciju: ' + e.getMessage());
+        }
+    }
+
+
+    @AuraEnabled
+    public static void deleteBookFromCollection(Id recordId) {
+        if (String.isBlank(recordId)) {
+            throw new AuraHandledException('The record ID is required for deletion.');
+        }
+
+        try {
+            delete [SELECT Id FROM BookInUserCollection__c WHERE Id = :recordId];
+        } catch (Exception e) {
+            System.debug('Error deleting BookInUserCollection record: ' + e.getMessage());
+            throw new AuraHandledException('Error deleting the book from the collection.');
+        }
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Book__c> getRecommendedBooks(Id bookCollectionId) {
+        if (String.isBlank(bookCollectionId)) {
+            throw new AuraHandledException('Book collection ID is required.');
+        }
+
+        BookInUserCollection__c collection = [
+            SELECT Book__c, Book__r.Genre__c, Book__r.Author__r.Name, Book__r.Author__r.Surname__c
+            FROM BookInUserCollection__c
+            WHERE Id = :bookCollectionId
+            LIMIT 1
+        ];
+
+        if (collection == null || collection.Book__r.Genre__c == null) {
+            throw new AuraHandledException('No genre information found for this book.');
+        }
+
+        List<Book__c> recommendedBooks = [
+            SELECT Id, Name, Book_cover__c, Author__r.Name, Author__r.Surname__c
+            FROM Book__c
+            WHERE Genre__c = :collection.Book__r.Genre__c
+              AND Id != :collection.Book__c
+            LIMIT 10
+        ];
+
+        return recommendedBooks;
     }
 
 }

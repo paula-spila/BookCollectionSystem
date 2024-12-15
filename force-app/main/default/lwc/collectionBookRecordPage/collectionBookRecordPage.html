@@ -1,0 +1,87 @@
+<template>
+  <template if:true={isLoading}>
+    <lightning-spinner alternative-text="Ielādē kolekcijas datus..."
+                       size="large"></lightning-spinner>
+  </template>
+
+  <template if:false={isLoading}>
+    <template if:true={collection}>
+      <div class="page-container slds-p-around_medium">
+        <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_large">
+
+          <div class="slds-col slds-size_3-of-12 cover-section">
+            <img src={collection.BookCover}
+                 alt="Grāmatas vāks"
+                 class="book-cover" />
+          </div>
+
+          <div class="slds-col slds-size_12-of-12 slds-medium-size_6-of-12">
+            <div class="details-container">
+              <div class="book-details slds-card slds-p-around_medium slds-m-bottom_medium">
+                <div class="book-header">
+                  <div class="book-info">
+                    <h1 class="book-title slds-text-heading_large">{collection.BookName}</h1>
+                    <p class="book-meta">
+                      Autors: {collection.AuthorName} {collection.AuthorSurname} |
+                      Žanrs: {collection.GenreName} |
+                      Publicēšanas datums: {collection.PublicationDate}
+                    </p>
+                  </div>
+                  <div class="book-actions">
+                    <button class="slds-button slds-button_brand"
+                            onclick={navigateToBook}>
+                      Skatīt grāmatas detaļas
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="collection-details slds-card slds-p-around_medium">
+                <div class="section-header">
+                  <h2 class="slds-text-heading_medium">Kolekcijas grāmatas detaļas</h2>
+                  <button class="slds-button slds-button_neutral edit-button"
+                          onclick={openEditModal}>
+                    Rediģēt kolekcijas datus
+                  </button>
+                </div>
+                <ul class="details-list">
+                  <li>Lasīšanas statuss: {collection.ReadingStatus}</li>
+                  <li>Formāts: {collection.Format}</li>
+                  <li>Pašreizējā lapa: {collection.CurrentPage} / {collection.TotalPages}</li>
+                  <li>Datums, kad sāka lasīt: {collection.DateStarted}</li>
+                  <li>Datums, kad pabeidza lasīt: {collection.DateFinished}</li>
+                  <li>ISBN: {collection.ISBN}</li>
+                  <li>Reizes izlasīta: {collection.TimesRead}</li>
+                </ul>
+
+                <div class="action-buttons slds-m-top_large">
+                  <button class="slds-button slds-button_destructive"
+                          onclick={handleDelete}>
+                    Dzēst no kolekcijas
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slds-col slds-size_3-of-12">
+            <c-recommendations-component book-collection-id={collection.Id}></c-recommendations-component>
+          </div>
+        </div>
+
+        <c-lending-history-component book-collection-id={collection.Id}></c-lending-history-component>
+
+        <c-edit-book-in-collection-form is-open={isEditModalOpen}
+                                        collection={collection}
+                                        onclosemodal={closeEditModal}
+                                        oncollectionupdated={handleCollectionUpdated}>
+        </c-edit-book-in-collection-form>
+
+      </div>
+    </template>
+
+    <template if:false={collection}>
+      <p class="no-details">Nav pieejami kolekcijas dati šim ierakstam.</p>
+    </template>
+  </template>
+</template>

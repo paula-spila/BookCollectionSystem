@@ -1,115 +1,45 @@
-import { LightningElement, track, api } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 import createLending from '@salesforce/apex/LendingHistoryController.createLending';
-//import getBookOptions from '@salesforce/apex/BookController.getBookOptions';
-import getReturnStatusOptions from '@salesforce/apex/LendingHistoryController.getReturnStatusOptions';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class AddLendingForm extends LightningElement {
-
-  // @track bookOptions = [];
-  @track returnStatusOptions = [];
-  // @track book = '';
-  @track lendingHistoryName = '';
-  @track lendingDate = new Date().toISOString().split('T')[0];
-  @track returnDate = '';
-  @track returnStatus = 'Not returned';
   @api isOpen = false;
-
-  connectedCallback() {
-    // this.loadBookOptions();
-    this.loadReturnStatusOptions();
-  }
-
-  @api openModal() {
-    this.isOpen = true;
-    this.lendingDate = new Date().toISOString().split('T')[0];
-    this.returnStatus = 'Not returned';
-  }
-
-  handleClose() {
-    this.isOpen = false;
-  }
+  @api bookId;
+  @track lenderName = '';
+  @track lendingDate = new Date().toISOString().split('T')[0];
 
   handleInputChange(event) {
     const field = event.target.dataset.id;
     this[field] = event.target.value;
   }
 
-  // handleBookChange(event) {
-  //   this.book = event.detail.value;
-  // }
-
-  handleReturnStatusChange(event) {
-    this.returnStatus = event.detail.value;
+  closeModal() {
+    this.dispatchEvent(new CustomEvent('closemodal'));
   }
 
-  // loadBookOptions() {
-  //   getBookOptions()
-  //     .then(result => {
-  //       this.bookOptions = result.map(option => ({
-  //         label: option.label,
-  //         value: option.value
-  //       }));
-  //     })
-  //     .catch(error => {
-  //       this.showError('Error loading books: ' + (error.body ? error.body.message : error.message));
-  //     });
-  // }
-
-  loadReturnStatusOptions() {
-    getReturnStatusOptions()
-      .then(result => {
-        this.returnStatusOptions = result.map(option => ({
-          label: option.label,
-          value: option.value
-        }));
-      })
-      .catch(error => {
-        this.showError('Error loading return statuses: ' + (error.body ? error.body.message : error.message));
-      });
-  }
-
-  handleSave() {
-    if (!this.book || !this.lendingHistoryName) {
-      this.showError('Please fill in all required fields: Book and Lending History Name.');
+  saveLending() {
+    if (!this.lenderName) {
+      this.showToast('Kļūda!', 'Aizņēmēja vārds ir obligāts.', 'error');
       return;
     }
 
     createLending({
-      // bookId: this.book,
-      lendingHistoryName: this.lendingHistoryName,
-      lendingDate: this.lendingDate || null,
-      returnDate: this.returnDate || null,
-      returnStatus: this.returnStatus || null
+      bookCollectionId: this.bookId,
+      lenderName: this.lenderName,
+      lendingDate: this.lendingDate,
+      returnStatus: 'Not returned'
     })
       .then(() => {
-        this.isOpen = false;
+        this.showToast('Veiksme!', 'Grāmata veiksmīgi aizdota.', 'success');
         this.dispatchEvent(new CustomEvent('lendingadded'));
-        this.showSuccess('Lending has been added successfully');
       })
-      .catch(error => {
-        console.error('Error:', error);
-        this.showError('Error saving lending: ' + (error.body ? error.body.message : error.message));
+      .catch((error) => {
+        console.error('Error saving lending:', error);
+        this.showToast('Kļūda!', 'Neizdevās saglabāt aizņemšanas informāciju.', 'error');
       });
   }
 
-  showSuccess(message) {
-    this.dispatchEvent(
-      new ShowToastEvent({
-        title: 'Success',
-        message: message,
-        variant: 'success'
-      })
-    );
-  }
-
-  showError(message) {
-    this.dispatchEvent(
-      new ShowToastEvent({
-        title: 'Error',
-        message: message,
-        variant: 'error'
-      })
-    );
+  showToast(title, message, variant) {
+    this.dispatchEvent(new ShowToastEvent({ title, message, variant }));
   }
 }

@@ -1,0 +1,49 @@
+<template>
+  <template if:true={isLoading}>
+    <lightning-spinner alternative-text="Ielādē aizņemšanās vēsturi..."
+                       size="medium"></lightning-spinner>
+  </template>
+
+  <template if:false={isLoading}>
+    <div class="lending-history-container slds-card slds-p-around_medium">
+      <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_9-of-12">
+          <h2 class="slds-text-heading_medium">Aizdošanas vēsture</h2>
+        </div>
+        <div class="slds-col slds-size_3-of-12 slds-text-align_right">
+          <template if:false={hasActiveLending}>
+            <button class="slds-button slds-button_brand"
+                    onclick={openAddLendingForm}>
+              Aizdot grāmatu
+            </button>
+          </template>
+          <template if:true={hasActiveLending}>
+            <button class="slds-button slds-button_success"
+                    onclick={handleMarkAsReturned}>
+              Atzīmēt kā atgrieztu
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <template if:true={lendingHistory.length}>
+        <lightning-datatable key-field="Id"
+                             data={lendingHistory}
+                             columns={columns}
+                             hide-checkbox-column>
+        </lightning-datatable>
+      </template>
+      <template if:false={lendingHistory.length}>
+        <p class="slds-text-body_regular">
+          Nav pieejama aizdošanas vēsture grāmatai.
+        </p>
+      </template>
+    </div>
+
+    <c-add-lending-form is-open={isAddLendingModalOpen}
+                        book-id={bookCollectionId}
+                        onclosemodal={closeAddLendingForm}
+                        onlendingadded={refreshLendingHistory}>
+    </c-add-lending-form>
+  </template>
+</template>
