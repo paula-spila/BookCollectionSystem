@@ -21,6 +21,16 @@ lightning-combobox {
   width: 100%;
 }
 
+.clear-filters-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.clear-filters-button {
+  align-self: flex-end;
+}
+
 .clear-filters-button:hover {
   background-color: #e0e3e8;
 }

@@ -3,34 +3,36 @@
     <h2 class="filters-header">Filtri</h2>
 
     <div class="filters-fields">
-      <lightning-input label="Book Title"
+      <lightning-input label="Grāmatas nosaukums"
                        value={title}
                        onchange={handleFilterChange}
                        data-id="title"
-                       placeholder="Enter book title">
+                       placeholder="Ievadiet grāmatas nosaukumu">
       </lightning-input>
 
-      <lightning-combobox label="Author"
+      <lightning-combobox label="Autors"
                           value={author}
                           options={authorOptions}
                           onchange={handleFilterChange}
                           data-id="author"
-                          placeholder="Select author">
+                          placeholder="Izvēlieties autoru">
       </lightning-combobox>
 
-      <lightning-combobox label="Genre"
+      <lightning-combobox label="Žanrs"
                           value={genre}
                           options={genreOptions}
                           onchange={handleFilterChange}
                           data-id="genre"
-                          placeholder="Select genre">
+                          placeholder="Izvēlieties žanru">
       </lightning-combobox>
     </div>
 
-    <lightning-button label="Clear Filters"
-                      variant="neutral"
-                      class="clear-filters-button"
-                      onclick={clearFilters}>
-    </lightning-button>
+    <div class="clear-filters-container">
+      <lightning-button label="Notīrīt filtrus"
+                        variant="neutral"
+                        class="clear-filters-button"
+                        onclick={clearFilters}>
+      </lightning-button>
+    </div>
   </div>
 </template>

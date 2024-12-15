@@ -7,9 +7,9 @@ public with sharing class BookInUserCollectionController {
         String query = 'SELECT Id, Book__r.Name, Book__r.Author__r.Name, Book__r.Author__r.Surname__c, Book__r.Genre__r.Name, Book__r.Book_cover__c, Reading_status__c FROM BookInUserCollection__c WHERE User__c = :currentUserId';
 
         if (collectionType == 'readBooks') {
-            query += ' AND Reading_status__c = \'Read\'';
+            query += ' AND Reading_status__c = \'Izlasīta\'';
         } else if (collectionType == 'wantToRead') {
-            query += ' AND Reading_status__c = \'Want to Read\'';
+            query += ' AND Reading_status__c = \'Gribu izlasīt\'';
         }
 
         return Database.query(query);
@@ -26,7 +26,7 @@ public with sharing class BookInUserCollectionController {
                        Book__r.Author__r.Surname__c,
                        Book__r.Number_of_pages__c
                 FROM BookInUserCollection__c
-                WHERE Reading_status__c = 'Currently reading'
+                WHERE Reading_status__c = 'Pašlaik lasu'
                   AND User__c = :UserInfo.getUserId()
                 ORDER BY LastModifiedDate DESC
             ];
@@ -74,7 +74,7 @@ public with sharing class BookInUserCollectionController {
             LIMIT 1
         ];
 
-        book.Reading_status__c = 'Read';
+        book.Reading_status__c = 'Izlasīta';
         book.Date_finished__c = Date.today();
         book.Times_read__c = (book.Times_read__c != null ? book.Times_read__c + 1 : 1);
         book.Current_page__c = 0;
@@ -105,14 +105,13 @@ public with sharing class BookInUserCollectionController {
             Date_bought__c = dateBought,
             ISBN__c = isbn,
             User__c = UserInfo.getUserId(),
-            Times_read__c = readingStatus == 'Read' ? 1 : 0,
+            Times_read__c = readingStatus == 'Izlasīta' ? 1 : 0,
             Current_page__c = 0
         );
 
         try {
             insert newCollectionEntry;
         } catch (Exception e) {
-            System.debug('Error adding book to collection: ' + e.getMessage());
             throw new AuraHandledException('Error adding book to collection: ' + e.getMessage());
         }
     }
@@ -145,7 +144,6 @@ public with sharing class BookInUserCollectionController {
                 WHERE Id = :recordId
             ];
         } catch (Exception e) {
-            System.debug('Error fetching BookInUserCollection record: ' + e.getMessage());
             throw new AuraHandledException('Error fetching the book collection details.');
         }
     }
@@ -193,7 +191,6 @@ public with sharing class BookInUserCollectionController {
         try {
             delete [SELECT Id FROM BookInUserCollection__c WHERE Id = :recordId];
         } catch (Exception e) {
-            System.debug('Error deleting BookInUserCollection record: ' + e.getMessage());
             throw new AuraHandledException('Error deleting the book from the collection.');
         }
     }
