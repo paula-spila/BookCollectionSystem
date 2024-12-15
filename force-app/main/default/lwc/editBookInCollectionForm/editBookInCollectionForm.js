@@ -7,16 +7,16 @@ export default class EditBookInCollectionForm extends LightningElement {
   @api collection;
   @track formatOptions = [
     { label: '--Nav norādīts--', value: '' },
-    { label: 'Cietie vāki', value: 'Hardcover' },
-    { label: 'Mīkstie vāki', value: 'Paperback' },
-    { label: 'E-grāmata', value: 'E-book' },
-    { label: 'Audiogrāmata', value: 'Audiobook' }
+    { label: 'Cietie vāki', value: 'Cietie vāki' },
+    { label: 'Mīkstie vāki', value: 'Mīkstie vāki' },
+    { label: 'E-grāmata', value: 'E-grāmata' },
+    { label: 'Audiogrāmata', value: 'Audiogrāmata' }
   ];
 
   @track readingStatusOptions = [
-    { label: 'Gribu izlasīt', value: 'Want to Read' },
-    { label: 'Pašlaik lasu', value: 'Currently Reading' },
-    { label: 'Izlasīta', value: 'Completed' }
+    { label: 'Gribu izlasīt', value: 'Gribu izlasīt' },
+    { label: 'Pašlaik lasu', value: 'Pašlaik lasu' },
+    { label: 'Izlasīta', value: 'Izlasīta' }
   ];
 
   handleInputChange(event) {
@@ -59,7 +59,6 @@ export default class EditBookInCollectionForm extends LightningElement {
 
     return true;
   }
-
 
   closeModal() {
     this.dispatchEvent(new CustomEvent('closemodal'));

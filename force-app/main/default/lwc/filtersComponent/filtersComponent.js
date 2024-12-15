@@ -19,7 +19,7 @@ export default class FiltersComponent extends LightningElement {
   loadFilterOptions() {
     getGenres()
       .then(result => {
-        this.genreOptions = [{ label: 'All', value: '' }, ...result.map(genre => ({
+        this.genreOptions = [{ label: 'Visi', value: '' }, ...result.map(genre => ({
           label: genre.Name,
           value: genre.Name,
         }))];
@@ -30,7 +30,7 @@ export default class FiltersComponent extends LightningElement {
 
     getAuthors()
       .then(result => {
-        this.authorOptions = [{ label: 'All', value: '' }, ...result.map(author => ({
+        this.authorOptions = [{ label: 'Visi', value: '' }, ...result.map(author => ({
           label: `${author.Name} ${author.Surname__c}`,
           value: author.Name,
         }))];
