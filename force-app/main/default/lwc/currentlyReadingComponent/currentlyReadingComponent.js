@@ -70,6 +70,14 @@ export default class CurrentlyReadingComponent extends NavigationMixin(Lightning
   markAsCompleted() {
     markBookAsCompleted({ bookId: this.selectedBookId })
       .then(() => {
+        this[NavigationMixin.Navigate]({
+          type: 'standard__recordPage',
+          attributes: {
+            recordId: this.selectedBookId,
+            objectApiName: 'BookInUserCollection__c',
+            actionName: 'view',
+          },
+        });
         this.books = this.books.filter(book => book.Id !== this.selectedBookId);
         this.showToast('Success', 'Grāmata veiksmīgi pabeigta.', 'success');
       })

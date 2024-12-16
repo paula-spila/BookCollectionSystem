@@ -17,6 +17,7 @@ export default class AddAuthorForm extends LightningElement {
   }
 
   @api openModal() {
+    this.resetFields();
     this.isOpen = true;
   }
 
@@ -35,62 +36,61 @@ export default class AddAuthorForm extends LightningElement {
   loadRegionOptions() {
     getRegionOptions()
       .then(result => {
-        this.regionOptions = result.map(region => {
-          return { label: region.label, value: region.value };
-        });
+        this.regionOptions = result.map(region => ({
+          label: region.label,
+          value: region.value,
+        }));
       })
       .catch(error => {
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: 'Error loading regions',
-            message: error.body.message,
-            variant: 'error',
-          })
-        );
+        this.showError('Error loading regions: ' + error.body.message);
       });
   }
 
-
   handleSave() {
-    try {
-      if (!this.authorName) {
-        this.showError('Please enter the author name.');
-        return;
-      }
-
-      addAuthor({
-        name: this.authorName,
-        surname: this.surname || null,
-        description: this.description || null,
-        region: this.selectedRegion || null
-      })
-        .then(() => {
-          this.isOpen = false;
-          this.dispatchEvent(new CustomEvent('authoradded'));
-          this.dispatchEvent(
-            new ShowToastEvent({
-              title: 'Success',
-              message: 'Author has been added successfully',
-              variant: 'success',
-            })
-          );
-        })
-        .catch(error => {
-          this.showError('Error saving author: ' + error.body.message);
-        });
-    } catch (e) {
-      console.error('Unexpected error:', e);
-      this.showError('An unexpected error occurred: ' + e.message);
+    if (!this.authorName) {
+      this.showError('Lūdzu ievadiet autora vārdu.');
+      return;
     }
+
+    addAuthor({
+      name: this.authorName,
+      surname: this.surname || null,
+      description: this.description || null,
+      region: this.selectedRegion || null,
+    })
+      .then(result => {
+        this.isOpen = false;
+
+        this.showToast('Veiksme!', 'Autors veiksmīgi pievienots.', 'success');
+      })
+      .catch(error => {
+        this.showError('Kļūda saglabājot autoru: ' + error.body.message);
+      });
   }
 
+  resetFields() {
+    this.authorName = '';
+    this.surname = '';
+    this.description = '';
+    this.selectedRegion = '';
+  }
 
   showError(message) {
     this.dispatchEvent(
       new ShowToastEvent({
-        title: 'Error',
+        title: 'Kļūda!',
         message: message,
         variant: 'error',
+      })
+    );
+  }
+
+  showToast(title, message, variant) {
+    this.dispatchEvent(
+      new ShowToastEvent({
+        title,
+        message,
+        variant,
       })
     );
   }

@@ -5,17 +5,20 @@ import getAuthors from '@salesforce/apex/BookController.getAuthors';
 import getGenres from '@salesforce/apex/BookController.getGenres';
 
 export default class AddBookForm extends LightningElement {
-  @track bookName = '';
-  @track publicationDate = '';
-  @track numberOfPages = '';
-  @track description = '';
-  @track selectedAuthor = '';
-  @track selectedGenre = '';
+  @api isOpen = false;
+
+  @track book = {
+    Name: '',
+    PublicationDate: '',
+    NumberOfPages: '',
+    Description: '',
+    AuthorId: null,
+    GenreId: null,
+    BookCover: '',
+  };
+
   @track authorOptions = [];
   @track genreOptions = [];
-  @track bookCover = '';
-
-  @api isOpen = false;
 
   connectedCallback() {
     this.loadAuthorOptions();
@@ -26,99 +29,114 @@ export default class AddBookForm extends LightningElement {
     this.isOpen = true;
   }
 
-  handleClose() {
-    this.isOpen = false;
-  }
-
-  handleInputChange(event) {
-    this[event.target.dataset.id] = event.target.value;
-  }
-
-  handleAuthorChange(event) {
-    this.selectedAuthor = event.detail.value;
-  }
-
-  handleGenreChange(event) {
-    this.selectedGenre = event.detail.value;
-  }
-
   loadAuthorOptions() {
     getAuthors()
-      .then(result => {
-        this.authorOptions = result.map(author => {
-          return { label: author.Name, value: author.Id };
-        });
+      .then((data) => {
+        this.authorOptions = data.map((author) => ({
+          label: `${author.Name} ${author.Surname__c || ''}`.trim(),
+          value: author.Id,
+        }));
       })
-      .catch(error => {
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: 'Error loading authors',
-            message: error.body.message,
-            variant: 'error',
-          })
-        );
+      .catch((error) => {
+        this.showToast('Kļūda!', 'Neizdevās ielādēt autorus.', 'error');
       });
   }
 
   loadGenreOptions() {
     getGenres()
-      .then(result => {
-        this.genreOptions = result.map(genre => {
-          return { label: genre.Name, value: genre.Id };
-        });
+      .then((data) => {
+        this.genreOptions = data.map((genre) => ({
+          label: genre.Name,
+          value: genre.Id,
+        }));
       })
-      .catch(error => {
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: 'Error loading genres',
-            message: error.body.message,
-            variant: 'error',
-          })
-        );
+      .catch((error) => {
+        this.showToast('Kļūda!', 'Neizdevās ielādēt žanrus.', 'error');
       });
   }
 
-  handleSave() {
-    if (!this.bookName) {
-      this.dispatchEvent(
-        new ShowToastEvent({
-          title: 'Error',
-          message: 'Please enter a book name.',
-          variant: 'error',
-        })
-      );
-      return;
+  handleInputChange(event) {
+    const field = event.target.dataset.id;
+    this.book = { ...this.book, [field]: event.target.value };
+  }
+
+  handleAuthorChange(event) {
+    this.book.AuthorId = event.detail.value || null;
+  }
+
+  handleGenreChange(event) {
+    this.book.GenreId = event.detail.value || null;
+  }
+
+  validateForm() {
+    if (!this.book.Name) {
+      this.showToast('Kļūda!', 'Grāmatas nosaukums ir obligāts.', 'error');
+      return false;
     }
 
+    if (this.book.NumberOfPages) {
+      const numberOfPages = parseInt(this.book.NumberOfPages, 10);
+      if (numberOfPages < 0) {
+        this.showToast('Kļūda!', 'Lappušu skaits nevar būt negatīvs.', 'error');
+        return false;
+      }
+      if (numberOfPages > 9999) {
+        this.showToast('Kļūda!', 'Lappušu skaits nevar pārsniegt 9999.', 'error');
+        return false;
+      }
+    }
+
+    if (this.book.PublicationDate && this.book.PublicationDate > new Date().toISOString().split('T')[0]) {
+      this.showToast('Kļūda!', 'Publicēšanas datums nevar būt nākotnē.', 'error');
+      return false;
+    }
+
+    return true;
+  }
+
+
+  handleSave() {
+    if (!this.validateForm()) return;
+
     addBook({
-      name: this.bookName,
-      publicationDate: this.publicationDate || null,
-      numberOfPages: this.numberOfPages ? parseInt(this.numberOfPages, 10) : null,
-      description: this.description || null,
-      authorId: this.selectedAuthor || null,
-      genreId: this.selectedGenre || null,
-      bookCover: this.bookCover || null
+      name: this.book.Name,
+      publicationDate: this.book.PublicationDate || null,
+      numberOfPages: this.book.NumberOfPages ? parseInt(this.book.NumberOfPages, 10) : null,
+      description: this.book.Description || null,
+      authorId: this.book.AuthorId || null,
+      genreId: this.book.GenreId || null,
+      bookCover: this.book.BookCover || null,
     })
       .then(() => {
-        this.isOpen = false;
+        this.showToast('Veiksme!', 'Grāmata veiksmīgi pievienota.', 'success');
+        this.resetForm();
         this.dispatchEvent(new CustomEvent('bookadded'));
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: 'Success',
-            message: 'Book has been added successfully',
-            variant: 'success',
-          })
-        );
+        this.isOpen = false;
       })
-      .catch(error => {
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: 'Error saving book',
-            message: error.body.message,
-            variant: 'error',
-          })
-        );
+      .catch((error) => {
+        console.error('Error saving book:', error);
+        this.showToast('Kļūda!', error.body?.message || 'Neizdevās pievienot grāmatu.', 'error');
       });
   }
 
+  resetForm() {
+    this.book = {
+      Name: '',
+      PublicationDate: '',
+      NumberOfPages: '',
+      Description: '',
+      AuthorId: null,
+      GenreId: null,
+      BookCover: '',
+    };
+  }
+
+  showToast(title, message, variant) {
+    this.dispatchEvent(new ShowToastEvent({ title, message, variant }));
+  }
+
+  handleClose() {
+    this.resetForm();
+    this.isOpen = false;
+  }
 }

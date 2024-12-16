@@ -16,10 +16,10 @@
         </header>
         <div class="slds-modal__content slds-p-around_medium">
 
-          <p><strong>Grāmatas nosaukums:</strong> {book.Name}</p>
+          <p><strong>Grāmatas nosaukums:</strong> {book.BookName}</p>
           <p><strong>Autors:</strong> {book.AuthorName} {book.AuthorSurname}</p>
 
-          <lightning-input label="Novērtējums"
+          <lightning-input label="Vērtējums (no 0 līdz 5)"
                            type="number"
                            value={rating}
                            min="0"
