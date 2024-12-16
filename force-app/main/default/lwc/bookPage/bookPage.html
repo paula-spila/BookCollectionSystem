@@ -21,21 +21,12 @@
                    onclick={handleOpenAuthorModal}>
                 Pievienot autoru
               </div>
-              <div class="custom-button"
-                   onclick={handleOpenReviewModal}>
-                Pievienot vērtējumu
-              </div>
-              <div class="custom-button"
-                   onclick={handleOpenLendingModal}>
-                Aizdot grāmatu
-              </div>
             </div>
 
           </div>
 
         </div>
 
-        <!-- Book Cards Panel -->
         <div class="slds-col slds-size_10-of-12">
           <div class="book-cards-container">
             <c-book-card filters={filters}></c-book-card>
@@ -44,7 +35,6 @@
 
       </div>
 
-      <!-- Modals -->
       <c-add-book-form is-open={isBookModalOpen}
                        onbookadded={handleBookAdded}>
       </c-add-book-form>
@@ -52,14 +42,6 @@
       <c-add-author-form is-open={isAuthorModalOpen}
                          onauthoradded={handleAuthorAdded}>
       </c-add-author-form>
-
-      <c-add-book-review-form is-open={isReviewModalOpen}
-                              onreviewadded={handleReviewAdded}>
-      </c-add-book-review-form>
-
-      <c-add-lending-form is-open={isLendingModalOpen}
-                          onlendingadded={handleLendingAdded}>
-      </c-add-lending-form>
     </div>
   </lightning-card>
 </template>

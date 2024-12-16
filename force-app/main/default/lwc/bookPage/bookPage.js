@@ -6,8 +6,6 @@ export default class BookPage extends NavigationMixin(LightningElement) {
   @track books = [];
   @track isBookModalOpen = false;
   @track isAuthorModalOpen = false;
-  @track isReviewModalOpen = false;
-  @track isLendingModalOpen = false;
 
   @track filters = {
     search: '',
@@ -48,39 +46,16 @@ export default class BookPage extends NavigationMixin(LightningElement) {
     }
   }
 
-  handleOpenReviewModal() {
-    const reviewModal = this.template.querySelector('c-add-book-review-form');
-    if (reviewModal) {
-      reviewModal.openModal();
-    }
-  }
-
-  handleOpenLendingModal() {
-    const lendingModal = this.template.querySelector('c-add-lending-form');
-    if (lendingModal) {
-      lendingModal.openModal();
-    }
-  }
-
   handleBookAdded() {
     this.isBookModalOpen = false;
-    this.loadBooks();
-    this.showToast('Success', 'Book has been added successfully', 'success');
+    const bookCard = this.template.querySelector('c-book-card');
+    if (bookCard) {
+      bookCard.loadBooks();
+    }
   }
 
   handleAuthorAdded() {
     this.isAuthorModalOpen = false;
-    this.showToast('Success', 'Author has been added successfully', 'success');
-  }
-
-  handleReviewAdded() {
-    this.isReviewModalOpen = false;
-    this.showToast('Success', 'Review has been added successfully', 'success');
-  }
-
-  handleLendingAdded() {
-    this.isLendingModalOpen = false;
-    this.showToast('Success', 'Lending has been added successfully', 'success');
   }
 
   showToast(title, message, variant) {

@@ -17,16 +17,21 @@ export default class CollectionBookCard extends NavigationMixin(LightningElement
   loadBooks() {
     this.isLoading = true;
     getBooks({ collectionType: this.pageName })
-      .then(data => {
+      .then((data) => {
         if (data) {
-          this.books = data.filter(bookEntry => bookEntry.Book__r);
+          this.books = data.filter(
+            (bookEntry) =>
+              bookEntry.Book__r &&
+              bookEntry.Book__r.Name &&
+              bookEntry.Book__r.Author__r
+          );
           this.applyFilters(this.filters);
         } else {
           this.books = [];
         }
         this.isLoading = false;
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error loading books:', error);
         this.isLoading = false;
       });

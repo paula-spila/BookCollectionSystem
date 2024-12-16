@@ -9,7 +9,7 @@
                   title="Aizvērt"
                   onclick={handleClose}>
             <lightning-icon icon-name="utility:close"
-                            alternative-text="close"
+                            alternative-text="Close"
                             size="small"></lightning-icon>
           </button>
           <h2 class="slds-text-heading_medium">Pievienot jaunu grāmatu</h2>
@@ -17,48 +17,46 @@
 
         <div class="slds-modal__content slds-p-around_medium">
           <lightning-input label="Grāmatas nosaukums"
-                           value={bookName}
+                           value={book.Name}
+                           data-id="Name"
                            required
-                           onchange={handleInputChange}
-                           data-id="bookName"></lightning-input>
-
-          <lightning-input label="Publicēšanas datums"
-                           type="date"
-                           value={publicationDate}
-                           onchange={handleInputChange}
-                           data-id="publicationDate"></lightning-input>
-
-          <lightning-input label="Lappušu skaits"
-                           type="number"
-                           value={numberOfPages}
-                           onchange={handleInputChange}
-                           data-id="numberOfPages"></lightning-input>
-
-          <lightning-textarea label="Apraksts"
-                              value={description}
-                              onchange={handleInputChange}
-                              data-id="description"></lightning-textarea>
+                           onchange={handleInputChange}></lightning-input>
 
           <lightning-combobox label="Autors"
                               placeholder="Izvēlēties autoru"
+                              value={book.AuthorId}
                               options={authorOptions}
-                              value={selectedAuthor}
-                              onchange={handleAuthorChange}>
-          </lightning-combobox>
+                              data-id="AuthorId"
+                              onchange={handleAuthorChange}></lightning-combobox>
 
           <lightning-combobox label="Žanrs"
                               placeholder="Izvēlēties žanru"
+                              value={book.GenreId}
                               options={genreOptions}
-                              value={selectedGenre}
-                              onchange={handleGenreChange}>
-          </lightning-combobox>
+                              data-id="GenreId"
+                              onchange={handleGenreChange}></lightning-combobox>
 
-          <lightning-input label="Grāmatas vāka hipersaite"
-                           type="text"
-                           value={bookCover}
-                           onchange={handleInputChange}
-                           data-id="bookCover"></lightning-input>
+          <lightning-input label="Lappušu skaits"
+                           type="number"
+                           value={book.NumberOfPages}
+                           data-id="NumberOfPages"
+                           onchange={handleInputChange}></lightning-input>
 
+          <lightning-input label="Publicēšanas datums"
+                           type="date"
+                           value={book.PublicationDate}
+                           data-id="PublicationDate"
+                           onchange={handleInputChange}></lightning-input>
+
+          <lightning-input label="Grāmatas vāka URL"
+                           value={book.BookCover}
+                           data-id="BookCover"
+                           onchange={handleInputChange}></lightning-input>
+
+          <lightning-textarea label="Apraksts"
+                              value={book.Description}
+                              data-id="Description"
+                              onchange={handleInputChange}></lightning-textarea>
         </div>
 
         <footer class="slds-modal__footer">

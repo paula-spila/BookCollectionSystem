@@ -3,6 +3,7 @@ import getBookCollectionDetails from '@salesforce/apex/BookInUserCollectionContr
 import deleteBookFromCollection from '@salesforce/apex/BookInUserCollectionController.deleteBookFromCollection';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
+import getReviews from '@salesforce/apex/BookReviewController.getBookReviews';
 
 export default class CollectionBookRecordPage extends NavigationMixin(LightningElement) {
   @api recordId;
@@ -11,6 +12,9 @@ export default class CollectionBookRecordPage extends NavigationMixin(LightningE
   @track isEditModalOpen = false;
   @track isEditPageModalOpen = false;
   @track isLendBookModalOpen = false;
+  @track reviews = [];
+  @track isLoading = true;
+  @track isReviewModalOpen = false;
 
   connectedCallback() {
     this.loadCollectionDetails();
@@ -93,10 +97,30 @@ export default class CollectionBookRecordPage extends NavigationMixin(LightningE
     this.loadCollectionDetails();
   }
 
+  loadReviews() {
+    getReviews({ bookId: this.collection.Id })
+      .then((data) => {
+        this.reviews = data;
+      })
+      .catch((error) => {
+        console.error('Error fetching reviews:', error);
+      });
+  }
+
+  handleOpenReviewModal() {
+    this.isReviewModalOpen = true;
+  }
+
+  closeReviewModal() {
+    this.isReviewModalOpen = false;
+  }
+
+  handleReviewAdded() {
+    this.isReviewModalOpen = false;
+  }
 
   handleLendBookUpdated() {
     this.isLendBookModalOpen = false;
-    // Refresh lending history
   }
 
   handleSavePageUpdate() {

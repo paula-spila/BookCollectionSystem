@@ -66,6 +66,12 @@
 
           <div class="slds-col slds-size_3-of-12">
             <c-recommendations-component book-collection-id={collection.Id}></c-recommendations-component>
+            <div class="review-container slds-m-top_large">
+              <button class="custom-button"
+                      onclick={handleOpenReviewModal}>
+                Pievienot atsauksmi
+              </button>
+            </div>
           </div>
         </div>
 
@@ -76,6 +82,12 @@
                                         onclosemodal={closeEditModal}
                                         oncollectionupdated={handleCollectionUpdated}>
         </c-edit-book-in-collection-form>
+
+        <c-add-book-review-form is-open={isReviewModalOpen}
+                                book={collection}
+                                onclose={closeReviewModal}
+                                onreviewadded={handleReviewAdded}>
+        </c-add-book-review-form>
 
       </div>
     </template>

@@ -1,20 +1,35 @@
 import { LightningElement, api, track } from 'lwc';
 import addToCollection from '@salesforce/apex/BookInUserCollectionController.addToCollection';
 import removeFromWishlist from '@salesforce/apex/WishlistController.removeFromWishlist';
+import isBookInWishlist from '@salesforce/apex/WishlistController.isBookInWishlist';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { NavigationMixin } from 'lightning/navigation';
 
-export default class AddToCollectionForm extends LightningElement {
+export default class AddToCollectionForm extends NavigationMixin(LightningElement) {
   @api isOpen;
   @api bookId;
 
-  @track readingStatus = '';
-  @track dateBought = '';
+  @track dateStarted = '';
+  @track dateFinished = '';
+  @track currentPage = 0;
   @track isbn = '';
+  @track dateBought = '';
+  @track readingStatus = '';
+  @track timesRead = 0;
+  @track format = '';
 
   readingStatusOptions = [
-    { label: 'Izlasīta', value: 'Read' },
-    { label: 'Gribu izlasīt', value: 'Want to Read' },
-    { label: 'Pašlaik lasu', value: 'Currently Reading' }
+    { label: 'Izlasīta', value: 'Izlasīta' },
+    { label: 'Gribu izlasīt', value: 'Gribu izlasīt' },
+    { label: 'Pašlaik lasu', value: 'Pašlaik lasu' }
+  ];
+
+  formatOptions = [
+    { label: '--Nav norādīts--', value: '' },
+    { label: 'Cietie vāki', value: 'Cietie vāki' },
+    { label: 'Mikstie vāki', value: 'Mikstie vāki' },
+    { label: 'E-grāmata', value: 'E-grāmata' },
+    { label: 'Audiogrāmata', value: 'Audiogrāmata' }
   ];
 
   handleInputChange(event) {
@@ -28,58 +43,70 @@ export default class AddToCollectionForm extends LightningElement {
 
   saveToCollection() {
     if (!this.readingStatus) {
-      this.dispatchEvent(
-        new ShowToastEvent({
-          title: 'Kļūda!',
-          message: 'Lasīšanas statuss ir obligāts.',
-          variant: 'error'
-        })
-      );
+      this.showToast('Kļūda!', 'Lasīšanas statuss ir obligāts.', 'error');
       return;
     }
-
     const today = new Date().toISOString().split('T')[0];
     const dateToSave = this.dateBought || today;
 
     if (new Date(dateToSave) > new Date()) {
-      this.dispatchEvent(
-        new ShowToastEvent({
-          title: 'Kļūda!',
-          message: 'Pirkšanas datums nevar būt nākotnē.',
-          variant: 'error'
-        })
-      );
+      this.showToast('Kļūda!', 'Pirkšanas datums nevar būt nākotnē.', 'error');
+      return;
+    }
+    if (this.currentPage < 0 || isNaN(this.currentPage)) {
+      this.showToast('Kļūda!', 'Pašreizējā lappusei jābūt pozitīvai vērtībai.', 'error');
+      return;
+    }
+    if (this.timesRead < 0 || isNaN(this.timesRead)) {
+      this.showToast('Kļūda!', 'Lasīšanas reizēm jābūt pozitīvam skaitlim.', 'error');
       return;
     }
 
     addToCollection({
       bookId: this.bookId,
-      readingStatus: this.readingStatus,
+      dateStarted: this.dateStarted || null,
+      dateFinished: this.dateFinished || null,
+      currentPage: this.currentPage,
+      isbn: this.isbn || null,
       dateBought: dateToSave,
-      isbn: this.isbn
+      readingStatus: this.readingStatus,
+      timesRead: this.timesRead,
+      format: this.format,
+      dateBought: dateToSave,
     })
       .then(() => {
-        return removeFromWishlist({ bookId: this.bookId });
+        return isBookInWishlist({ bookId: this.bookId });
+      })
+      .then((isInWishlist) => {
+        if (isInWishlist) {
+          return removeFromWishlist({ bookId: this.bookId });
+        }
+        return Promise.resolve();
       })
       .then(() => {
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: 'Veiksme!',
-            message: 'Grāmata veiksmīgi pievienota kolekcijai un noņemta no vēlmju saraksta.',
-            variant: 'success'
-          })
+        this.showToast(
+          'Veiksme!',
+          'Grāmata veiksmīgi pievienota kolekcijai.' +
+          (this.readingStatus === 'Gribu izlasīt'
+            ? ' (Un noņemta arī no vēlmju saraksta.)'
+            : ''),
+          'success'
         );
         this.closeModal();
+        this[NavigationMixin.Navigate]({
+          type: 'standard__navItemPage',
+          attributes: {
+            apiName: 'Mana_kolekcija'
+          }
+        });
       })
       .catch((error) => {
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: 'Kļūda!',
-            message: 'Neizdevās pievienot grāmatu kolekcijai vai noņemt no vēlmju saraksta. Mēģiniet vēlreiz.',
-            variant: 'error'
-          })
-        );
-        console.error('Error processing request:', error);
+        console.error('Error:', error);
+        this.showToast('Kļūda!', 'Neizdevās saglabāt datus. Mēģiniet vēlreiz.', 'error');
       });
+  }
+
+  showToast(title, message, variant) {
+    this.dispatchEvent(new ShowToastEvent({ title, message, variant }));
   }
 }

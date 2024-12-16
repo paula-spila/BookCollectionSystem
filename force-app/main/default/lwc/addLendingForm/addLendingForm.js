@@ -32,12 +32,14 @@ export default class AddLendingForm extends LightningElement {
       .then(() => {
         this.showToast('Veiksme!', 'Grāmata veiksmīgi aizdota.', 'success');
         this.dispatchEvent(new CustomEvent('lendingadded'));
+        this.closeModal();
       })
       .catch((error) => {
         console.error('Error saving lending:', error);
         this.showToast('Kļūda!', 'Neizdevās saglabāt aizņemšanas informāciju.', 'error');
       });
   }
+
 
   showToast(title, message, variant) {
     this.dispatchEvent(new ShowToastEvent({ title, message, variant }));
