@@ -64,27 +64,22 @@ public with sharing class BookController {
         Id genreId,
         String bookCover
     ) {
-        // Validate required fields
         if (String.isBlank(name)) {
             throw new AuraHandledException('Missing required field: Book Name.');
         }
 
-        // Validate publication date (cannot be in the future)
         if (publicationDate != null && publicationDate > Date.today()) {
             throw new AuraHandledException('Publication date cannot be in the future.');
         }
 
-        // Validate number of pages (positive integer)
         if (numberOfPages != null && numberOfPages <= 0) {
             throw new AuraHandledException('Number of pages must be a positive integer.');
         }
 
-        // Validate description length
         if (!String.isBlank(description) && description.length() > 3000) {
             throw new AuraHandledException('Description should not exceed 3000 characters.');
         }
     
-        // Create the Book record
         Book__c newBook = new Book__c(
             Name = name,
             Publication_Date__c = publicationDate,
@@ -104,13 +99,12 @@ public with sharing class BookController {
         return newBook.Id;
     }
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static Book__c getBookDetails(Id bookId) {
         try {
-            // Query for book details
             return [
                 SELECT Id, Name, Number_of_pages__c, Publication_date__c, Description__c, 
-                       Book_cover__c, Author__c, Author__r.Name, Author__r.Surname__c, Genre__r.Name
+                       Book_cover__c, Author__c, Author__r.Name, Author__r.Surname__c, Author__r.Description__c,  Genre__r.Name
                 FROM Book__c
                 WHERE Id = :bookId
             ];
@@ -120,11 +114,16 @@ public with sharing class BookController {
     }
 
     @AuraEnabled
-    public static List<Book__c> getBooksByAuthor(Id authorId) {
+    public static List<Book__c> getBooksByAuthor(Id authorId, Id currentBookId) {
+        if (authorId == null) {
+            throw new AuraHandledException('Author ID is required.');
+        }
+        
         return [
             SELECT Id, Name, Book_cover__c
             FROM Book__c
             WHERE Author__c = :authorId
+            AND Id != :currentBookId
             ORDER BY Name ASC
         ];
     }

@@ -1,6 +1,6 @@
 public with sharing class BookInUserCollectionController {
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static List<BookInUserCollection__c> getBooks(String collectionType) {
         Id currentUserId = UserInfo.getUserId();
 

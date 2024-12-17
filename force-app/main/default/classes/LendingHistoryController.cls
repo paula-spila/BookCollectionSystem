@@ -1,6 +1,6 @@
 public with sharing class LendingHistoryController {
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static List<Lending_History__c> getLendingHistory(Id bookCollectionId) {
         if (String.isBlank(bookCollectionId)) {
             throw new AuraHandledException('The book collection ID is required.');

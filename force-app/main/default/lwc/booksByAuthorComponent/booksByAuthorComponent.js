@@ -6,6 +6,7 @@ export default class BooksByAuthorComponent extends NavigationMixin(LightningEle
   @api authorId;
   @api authorName;
   @api authorSurname;
+  @api currentBookId;
   @track books = [];
 
   connectedCallback() {
@@ -17,7 +18,7 @@ export default class BooksByAuthorComponent extends NavigationMixin(LightningEle
   }
 
   loadBooks() {
-    getBooksByAuthor({ authorId: this.authorId })
+    getBooksByAuthor({ authorId: this.authorId, currentBookId: this.currentBookId })
       .then((data) => {
         this.books = data.map((book) => ({
           Id: book.Id,
@@ -27,6 +28,7 @@ export default class BooksByAuthorComponent extends NavigationMixin(LightningEle
       })
       .catch((error) => {
         console.error('Error fetching books by author:', error);
+        this.books = [];
       });
   }
 

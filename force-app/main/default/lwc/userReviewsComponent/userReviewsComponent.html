@@ -1,0 +1,86 @@
+<template>
+  <div class="reviews-container">
+    <div class="reviews-header">
+      <h2>Manas atsauksmes</h2>
+      <button class="slds-button slds-button_brand"
+              onclick={handleOpenReviewModal}>
+        Pievienot atsauksmi
+      </button>
+    </div>
+
+    <template if:true={isLoading}>
+      <lightning-spinner alternative-text="Ielādē atsauksmes..."
+                         size="small"></lightning-spinner>
+    </template>
+
+    <template if:false={isLoading}>
+      <template if:true={reviews.length}>
+        <div class="reviews-list">
+          <template for:each={reviews}
+                    for:item="review">
+            <div key={review.Id}
+                 class="review-card">
+              <div class="review-content">
+                <p class="review-rating"><strong>Vērtējums:</strong> {review.Rating__c} / 5</p>
+                <p class="review-text"><strong>Atsauksme:</strong> {review.Review_text__c}</p>
+              </div>
+              <div class="review-actions">
+                <lightning-button-icon icon-name="utility:edit"
+                                       alternative-text="Rediģēt"
+                                       onclick={handleEdit}
+                                       data-id={review.Id}
+                                       title="Rediģēt"></lightning-button-icon>
+                <lightning-button-icon icon-name="utility:delete"
+                                       alternative-text="Dzēst"
+                                       onclick={handleDelete}
+                                       data-id={review.Id}
+                                       title="Dzēst"></lightning-button-icon>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <template if:false={reviews.length}>
+        <p class="no-reviews">Nav pievienotas atsauksmes.</p>
+      </template>
+    </template>
+  </div>
+
+  <c-add-book-review-form is-open={isReviewModalOpen}
+                          book={book}
+                          onclose={handleCloseReviewModal}
+                          onreviewadded={handleReviewAdded}>
+  </c-add-book-review-form>
+
+  <template if:true={isEditModalOpen}>
+    <section role="dialog"
+             tabindex="-1"
+             class="slds-modal slds-fade-in-open">
+      <div class="slds-modal__container">
+        <header class="slds-modal__header">
+          <h2 class="slds-text-heading_medium">Rediģēt atsauksmi</h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium">
+          <lightning-input type="number"
+                           label="Vērtējums (0-5)"
+                           value={editRating}
+                           min="0"
+                           max="5"
+                           onchange={handleRatingChange}></lightning-input>
+          <lightning-textarea label="Atsauksmes teksts"
+                              value={editReviewText}
+                              onchange={handleReviewTextChange}></lightning-textarea>
+        </div>
+        <footer class="slds-modal__footer">
+          <lightning-button label="Atcelt"
+                            onclick={handleCancelEdit}></lightning-button>
+          <lightning-button variant="brand"
+                            label="Saglabāt"
+                            onclick={handleSaveEdit}></lightning-button>
+        </footer>
+      </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </template>
+</template>

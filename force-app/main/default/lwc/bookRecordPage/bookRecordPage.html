@@ -27,9 +27,10 @@
                     Noņemt no vēlmju saraksta
                   </button>
                 </template>
-
                 <button class="slds-button slds-button_success"
-                        onclick={openAddToCollection}>Pievienot kolekcijai</button>
+                        onclick={openAddToCollection}>
+                  Pievienot kolekcijai
+                </button>
               </div>
             </div>
           </div>
@@ -37,41 +38,63 @@
           <div class="slds-col slds-size_6-of-12">
             <div class="details-section">
               <button class="slds-button slds-button_neutral edit-button"
-                      onclick={openEditModal}>Rediģēt grāmatu</button>
+                      onclick={openEditModal}>
+                Rediģēt grāmatu
+              </button>
               <h1 class="book-title">{book.Name}</h1>
-              <p class="author">Autors: {book.AuthorName} {book.AuthorSurname}</p>
-              <p class="genre">Žanrs: {book.GenreName}</p>
+              <p class="author"><strong>Autors:</strong> {book.AuthorName} {book.AuthorSurname}</p>
+              <p class="genre"><strong>Žanrs:</strong> {book.GenreName}</p>
               <p class="meta">{book.NumberOfPages} lappuses | Publicēta: {book.PublicationDate}</p>
+
+              <template if:true={averageRating}>
+                <p class="meta"><strong>Vidējais vērtējums:</strong> {averageRating}/5</p>
+              </template>
+              <template if:false={averageRating}>
+                <p class="meta">Nav pieejamas atsauksmes.</p>
+              </template>
+
               <div class="book-description">
-                <h2>Apraksts</h2>
+                <h2>Grāmatas apraksts</h2>
                 <p>{book.Description}</p>
               </div>
+
+              <template if:true={book.AuthorDescription}>
+                <div class="author-description slds-m-top_medium">
+                  <h2>Par autoru</h2>
+                  <p>{book.AuthorDescription}</p>
+                </div>
+              </template>
             </div>
           </div>
 
           <div class="slds-col slds-size_3-of-12">
             <div class="more-books-section">
               <c-books-by-author-component author-id={authorId}
+                                           current-book-id={book.Id}
                                            author-name={book.AuthorName}
-                                           author-surname={book.AuthorSurname}></c-books-by-author-component>
+                                           author-surname={book.AuthorSurname}>
+              </c-books-by-author-component>
             </div>
             <div class="reviews-section">
               <c-reviews-component reviews={reviews}
                                    book={book}
-                                   onrefreshreviews={handleRefreshReviews}></c-reviews-component>
-
+                                   onrefreshreviews={handleRefreshReviews}>
+              </c-reviews-component>
             </div>
           </div>
         </div>
+
         <c-edit-book-form is-open={isEditModalOpen}
                           book={book}
                           onclosemodal={closeEditModal}
-                          onbookupdated={handleBookUpdated}></c-edit-book-form>
+                          onbookupdated={handleBookUpdated}>
+        </c-edit-book-form>
 
         <c-add-to-collection-form is-open={isAddToCollectionModalOpen}
                                   book-id={book.Id}
                                   onclosemodal={closeAddToCollectionModal}
-                                  onbookadded={handleBookAddedToCollection}></c-add-to-collection-form>
+                                  onbookadded={handleBookAddedToCollection}>
+        </c-add-to-collection-form>
       </div>
     </template>
 
