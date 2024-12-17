@@ -69,3 +69,15 @@
 .reviews-section {
   padding: 15px;
 }
+
+.author-description h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.author-description p {
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #555;
+}

@@ -42,4 +42,32 @@ public with sharing class BookReviewController {
             throw new AuraHandledException('Error fetching book reviews: ' + ex.getMessage());
         }
     }
+
+    @AuraEnabled
+    public static List<Book_Review__c> getUserReviews(Id bookId) {
+        Id currentUserId = UserInfo.getUserId();
+        return [
+            SELECT Id, Rating__c, Review_text__c
+            FROM Book_Review__c
+            WHERE Book__c = :bookId AND CreatedById = :currentUserId
+        ];
+    }
+
+    @AuraEnabled
+    public static void updateReview(Id reviewId, Decimal rating, String reviewText) {
+        if (reviewId == null || rating == null || reviewText == null) {
+            throw new AuraHandledException('Trūkst obligātie lauki atsauksmei.');
+        }
+        Book_Review__c review = [SELECT Id, Rating__c, Review_text__c FROM Book_Review__c WHERE Id = :reviewId LIMIT 1];
+        review.Rating__c = rating;
+        review.Review_text__c = reviewText;
+        update review;
+    }
+
+
+    @AuraEnabled
+    public static void deleteReview(Id reviewId) {
+        Book_Review__c review = [SELECT Id FROM Book_Review__c WHERE Id = :reviewId LIMIT 1];
+        delete review;
+    }
 }

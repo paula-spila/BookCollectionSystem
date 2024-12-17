@@ -1,7 +1,7 @@
 <template>
-  <div class="more-books">
+  <div class="more-books recommendations">
     <h2>Vairāk grāmatas no {authorName} {authorSurname}</h2>
-    <template if:true={books}>
+    <template if:true={books.length}>
       <div class="books-scroll-container">
         <template for:each={books}
                   for:item="book">
@@ -17,8 +17,8 @@
         </template>
       </div>
     </template>
-    <template if:false={books}>
-      <p>Nav pieejaas vairāk grāmatas no šī autora.</p>
+    <template if:false={books.length}>
+      <p>Nav pieejamas vairāk grāmatas no šī autora.</p>
     </template>
   </div>
 </template>

@@ -8,11 +8,6 @@ export default class AddBookReviewForm extends LightningElement {
   @track rating = '';
   @track reviewText = '';
 
-  connectedCallback() {
-    console.log('Book object:', JSON.stringify(this.book));
-  }
-
-
   handleInputChange(event) {
     const field = event.target.dataset.id;
     if (field === 'rating') {

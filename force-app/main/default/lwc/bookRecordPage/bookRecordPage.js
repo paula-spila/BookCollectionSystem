@@ -10,6 +10,7 @@ export default class BookRecordPage extends LightningElement {
   @api recordId;
   @track book;
   @track reviews = [];
+  @track averageRating = null;
   @track authorId;
   @track isEditModalOpen = false;
   @track isInWishlist = false;
@@ -37,12 +38,14 @@ export default class BookRecordPage extends LightningElement {
           Name: data.Name,
           AuthorName: data.Author__r?.Name || 'Nezināms',
           AuthorSurname: data.Author__r?.Surname__c || '',
+          AuthorDescription: data.Author__r?.Description__c || 'Nav pieejams autora apraksts',
           GenreName: data.Genre__r?.Name || 'Nezināms',
           NumberOfPages: data.Number_of_pages__c,
           PublicationDate: data.Publication_date__c,
           Description: data.Description__c,
           BookCover: data.Book_cover__c || 'https://placeholder6-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Png&versionId=068d20000025O8b&operationContext=CHATTER&contentId=05Td2000002Osvl',
         };
+
         this.authorId = data.Author__c;
       });
   }
@@ -56,7 +59,17 @@ export default class BookRecordPage extends LightningElement {
           ReviewText: review.Review_text__c,
           Rating: review.Rating__c,
         }));
+        this.calculateAverageRating();
       });
+  }
+
+  calculateAverageRating() {
+    if (this.reviews.length > 0) {
+      const totalRating = this.reviews.reduce((sum, review) => sum + review.Rating, 0);
+      this.averageRating = (totalRating / this.reviews.length).toFixed(1);
+    } else {
+      this.averageRating = null;
+    }
   }
 
   checkWishlistStatus() {

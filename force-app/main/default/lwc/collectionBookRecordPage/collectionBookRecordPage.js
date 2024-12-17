@@ -93,7 +93,6 @@ export default class CollectionBookRecordPage extends NavigationMixin(LightningE
 
 
   handleCollectionUpdated() {
-    console.log('Collection update event received.');
     this.loadCollectionDetails();
   }
 
@@ -105,18 +104,6 @@ export default class CollectionBookRecordPage extends NavigationMixin(LightningE
       .catch((error) => {
         console.error('Error fetching reviews:', error);
       });
-  }
-
-  handleOpenReviewModal() {
-    this.isReviewModalOpen = true;
-  }
-
-  closeReviewModal() {
-    this.isReviewModalOpen = false;
-  }
-
-  handleReviewAdded() {
-    this.isReviewModalOpen = false;
   }
 
   handleLendBookUpdated() {
@@ -134,14 +121,6 @@ export default class CollectionBookRecordPage extends NavigationMixin(LightningE
 
   closeEditModal() {
     this.isEditModalOpen = false;
-  }
-
-  openEditPageModal() {
-    this.isEditPageModalOpen = true;
-  }
-
-  closeEditPageModal() {
-    this.isEditPageModalOpen = false;
   }
 
   openLendBookModal() {

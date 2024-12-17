@@ -4,7 +4,7 @@
       <h2 class="slds-col slds-size_12-of-12">Atsauksmes</h2>
     </div>
 
-    <template if:true={reviews}>
+    <template if:true={reviews.length}>
       <template for:each={reviews}
                 for:item="review">
         <div key={review.Id}
@@ -14,7 +14,7 @@
         </div>
       </template>
     </template>
-    <template if:false={reviews}>
+    <template if:false={reviews.length}>
       <p>Nav pieejamas atsauksmes par šo grāmatu.</p>
     </template>
   </div>

@@ -1,6 +1,6 @@
 public with sharing class WishlistController {
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static Boolean isBookInWishlist(Id bookId) {
         if (bookId == null) {
             throw new AuraHandledException('Book ID is required.');

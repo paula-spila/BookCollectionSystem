@@ -16,7 +16,7 @@
         </header>
         <div class="slds-modal__content slds-p-around_medium">
 
-          <p><strong>Grāmatas nosaukums:</strong> {book.BookName}</p>
+          <p><strong>Grāmatas nosaukums:</strong> {book.Name}</p>
           <p><strong>Autors:</strong> {book.AuthorName} {book.AuthorSurname}</p>
 
           <lightning-input label="Vērtējums (no 0 līdz 5)"
@@ -25,7 +25,8 @@
                            min="0"
                            max="5"
                            onchange={handleInputChange}
-                           data-id="rating"></lightning-input>
+                           data-id="rating"
+                           required></lightning-input>
 
           <lightning-textarea label="Atsauksmes teksts"
                               value={reviewText}
@@ -35,7 +36,8 @@
         <footer class="slds-modal__footer">
           <lightning-button variant="neutral"
                             label="Atcelt"
-                            onclick={handleClose}></lightning-button>
+                            onclick={handleClose}
+                            class="slds-m-right_medium"></lightning-button>
           <lightning-button variant="brand"
                             label="Saglabāt vērtējumu"
                             onclick={handleSave}></lightning-button>
