@@ -57,6 +57,14 @@ export default class EditBookInCollectionForm extends LightningElement {
       }
     }
 
+    if (isValidDate(this.collection.DateBought)) {
+      const today = new Date().toISOString().split('T')[0];
+      if (this.collection.DateBought > today) {
+        this.showToast('Kļūda!', 'Pirkšanas datums nevar būt nākotnē.', 'error');
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -76,7 +84,8 @@ export default class EditBookInCollectionForm extends LightningElement {
       Date_finished__c: this.collection.DateFinished === 'Nav' ? null : this.collection.DateFinished,
       ISBN__c: this.collection.ISBN || null,
       Format__c: this.collection.Format === '--None--' ? null : this.collection.Format,
-      Reading_status__c: this.collection.ReadingStatus === '--None--' ? null : this.collection.ReadingStatus
+      Reading_status__c: this.collection.ReadingStatus === '--None--' ? null : this.collection.ReadingStatus,
+      Date_bought__c: this.collection.DateBought === 'Nav' ? null : this.collection.DateBought
     };
 
     updateBookCollection({ bookInUserCollection: recordToUpdate })

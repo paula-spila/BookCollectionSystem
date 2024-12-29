@@ -67,14 +67,16 @@
                            value={editRating}
                            min="0"
                            max="5"
-                           onchange={handleRatingChange}></lightning-input>
+                           onchange={handleRatingChange}
+                           required></lightning-input>
           <lightning-textarea label="Atsauksmes teksts"
                               value={editReviewText}
                               onchange={handleReviewTextChange}></lightning-textarea>
         </div>
         <footer class="slds-modal__footer">
           <lightning-button label="Atcelt"
-                            onclick={handleCancelEdit}></lightning-button>
+                            onclick={handleCancelEdit}
+                            class="slds-m-right_medium"></lightning-button>
           <lightning-button variant="brand"
                             label="Saglabāt"
                             onclick={handleSaveEdit}></lightning-button>

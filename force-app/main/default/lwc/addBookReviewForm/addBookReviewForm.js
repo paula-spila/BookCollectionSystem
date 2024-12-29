@@ -32,6 +32,11 @@ export default class AddBookReviewForm extends LightningElement {
       return;
     }
 
+    if (this.reviewText && this.reviewText.length > 3000) {
+      this.showToast('Kļūda!', 'Atsauksmes teksts nevar būt garāks par 3000 rakstzīmēm.', 'error');
+      return false;
+    }
+
     addReview({
       bookId: this.book.BookId,
       rating: this.rating,

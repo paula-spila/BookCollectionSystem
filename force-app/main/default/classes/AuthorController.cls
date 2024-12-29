@@ -2,11 +2,11 @@ public with sharing class AuthorController {
     @AuraEnabled
     public static Id addAuthor(String name, String surname, String description, String region) {
         if (String.isBlank(name)) {
-            throw new AuraHandledException('Missing required field: Author Name.');
+            throw new AuraHandledException('Trūkst obligātais lauks: Autora vārds.');
         }
 
-        if (!String.isBlank(description) && description.length() > 3000) {
-            throw new AuraHandledException('Description should not exceed 3000 characters.');
+        if (!String.isBlank(description) && description.length() > 5000) {
+            throw new AuraHandledException('Apraksts nedrīkst pārsniegt 5000 rakstzīmes.');
         }
 
         Author__c newAuthor = new Author__c(
@@ -20,7 +20,7 @@ public with sharing class AuthorController {
             insert newAuthor;
         } catch (Exception e) {
             System.debug('Exception: ' + e.getMessage());
-            throw new AuraHandledException('Error creating new author: ' + e.getMessage());
+            throw new AuraHandledException('Kļūda, izveidojot jaunu autoru: ' + e.getMessage());
         }
         
         return newAuthor.Id;

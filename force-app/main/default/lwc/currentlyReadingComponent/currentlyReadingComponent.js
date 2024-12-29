@@ -18,7 +18,7 @@ export default class CurrentlyReadingComponent extends NavigationMixin(Lightning
       this.books = data;
     } else {
       this.books = [];
-      this.showToast('Error', 'Failed to fetch books currently being read.', 'error');
+      this.showToast('Kļūda', 'Neizdevās iegūt pašlaik lasītās grāmatas.', 'error');
     }
   }
 
@@ -38,7 +38,7 @@ export default class CurrentlyReadingComponent extends NavigationMixin(Lightning
   handleModalSave() {
     if (this.selectedCurrentPage === 0) {
       this.selectedCurrentPage = 1;
-      this.showToast('Warning', 'Pašreizējā lapa nevar būt 0. Tika iestatīta uz 1.', 'warning');
+      this.showToast('Brīdinājums', 'Pašreizējā lapa nevar būt 0. Tika iestatīta uz 1.', 'warning');
     }
 
     if (this.selectedCurrentPage === this.selectedTotalPages) {
@@ -57,10 +57,10 @@ export default class CurrentlyReadingComponent extends NavigationMixin(Lightning
           }
           return book;
         });
-        this.showToast('Success', `Pašreizējā lapa atjaunināta uz ${this.selectedCurrentPage}.`, 'success');
+        this.showToast('Veiksme', `Pašreizējā lapa atjaunināta uz ${this.selectedCurrentPage}.`, 'success');
       })
       .catch(() => {
-        this.showToast('Error', 'Failed to update the current page.', 'error');
+        this.showToast('Kļūda', 'Neizdevās atjaunināt pašreizējo lapu.', 'error');
       })
       .finally(() => {
         this.showModal = false;
@@ -79,10 +79,10 @@ export default class CurrentlyReadingComponent extends NavigationMixin(Lightning
           },
         });
         this.books = this.books.filter(book => book.Id !== this.selectedBookId);
-        this.showToast('Success', 'Grāmata veiksmīgi pabeigta.', 'success');
+        this.showToast('Veiksme', 'Grāmata veiksmīgi pabeigta.', 'success');
       })
       .catch(() => {
-        this.showToast('Error', 'Failed to mark the book as completed.', 'error');
+        this.showToast('Kļūda', 'Neizdevās pabeigt grāmatu.', 'error');
       })
       .finally(() => {
         this.showModal = false;

@@ -36,7 +36,7 @@ export default class LendingHistoryComponent extends LightningElement {
       })
       .catch((error) => {
         console.error('Error fetching lending history:', error);
-        this.showToast('Kļūda!', 'Neizdevās ielādēt aizņemšanās vēsturi.', 'error');
+        this.showToast('Kļūda!', 'Neizdevās ielādēt aizdošanas vēsturi.', 'error');
       })
       .finally(() => {
         this.isLoading = false;
