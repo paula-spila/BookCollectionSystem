@@ -80,6 +80,17 @@
           <lightning-layout>
             <lightning-layout-item size="12"
                                    padding="around-small">
+              <lightning-input label="Pirkšanas datums"
+                               type="date"
+                               value={collection.DateBought}
+                               onchange={handleInputChange}
+                               data-id="DateBought"></lightning-input>
+            </lightning-layout-item>
+          </lightning-layout>
+
+          <lightning-layout>
+            <lightning-layout-item size="12"
+                                   padding="around-small">
               <lightning-input label="ISBN"
                                type="text"
                                value={collection.ISBN}

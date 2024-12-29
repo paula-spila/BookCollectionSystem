@@ -23,6 +23,17 @@ export default class AddLendingForm extends LightningElement {
       return;
     }
 
+    if (!this.lendingDate) {
+      this.showToast('Kļūda!', 'Aizdošanas datums ir obligāts.', 'error');
+      return;
+    }
+
+    const currentDate = new Date().toISOString().split('T')[0];
+    if (this.lendingDate > currentDate) {
+      this.showToast('Kļūda!', 'Aizdošanas datums nevar būt nākotnē.', 'error');
+      return;
+    }
+
     createLending({
       bookCollectionId: this.bookId,
       lenderName: this.lenderName,
@@ -36,7 +47,7 @@ export default class AddLendingForm extends LightningElement {
       })
       .catch((error) => {
         console.error('Error saving lending:', error);
-        this.showToast('Kļūda!', 'Neizdevās saglabāt aizņemšanas informāciju.', 'error');
+        this.showToast('Kļūda!', 'Neizdevās saglabāt aizdošanas informāciju.', 'error');
       });
   }
 

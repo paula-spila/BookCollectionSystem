@@ -72,6 +72,11 @@ export default class UserReviewsComponent extends LightningElement {
       return;
     }
 
+    if (this.editReviewText && this.editReviewText.length > 3000) {
+      this.showToast('Kļūda!', 'Atsauksmes teksts nevar būt garāks par 3000 rakstzīmēm.', 'error');
+      return false;
+    }
+
     updateReview({
       reviewId: this.editReviewId,
       rating: this.editRating,

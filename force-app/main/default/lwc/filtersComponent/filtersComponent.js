@@ -25,7 +25,7 @@ export default class FiltersComponent extends LightningElement {
         }))];
       })
       .catch(error => {
-        this.showError('Error loading genres: ' + (error.body ? error.body.message : error.message));
+        this.showError('Kļūda ielādējot žanrus: ' + (error.body ? error.body.message : error.message));
       });
 
     getAuthors()
@@ -36,7 +36,7 @@ export default class FiltersComponent extends LightningElement {
         }))];
       })
       .catch(error => {
-        this.showError('Error loading authors: ' + (error.body ? error.body.message : error.message));
+        this.showError('Kļūda ielādējot autorus: ' + (error.body ? error.body.message : error.message));
       });
   }
 
@@ -66,7 +66,7 @@ export default class FiltersComponent extends LightningElement {
   }
 
   showError(message) {
-    this.showToast('Error', message, 'error');
+    this.showToast('Kļūda', message, 'error');
   }
 
 }

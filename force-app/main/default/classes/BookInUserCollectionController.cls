@@ -67,6 +67,10 @@ public with sharing class BookInUserCollectionController {
 
     @AuraEnabled
     public static void markBookAsCompleted(Id bookId) {
+        if (String.isBlank(bookId)) {
+            throw new AuraHandledException('The book ID is required.');
+        }
+
         BookInUserCollection__c book = [
             SELECT Id, Current_page__c, Times_read__c, Date_finished__c, Reading_status__c
             FROM BookInUserCollection__c
