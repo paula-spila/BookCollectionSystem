@@ -1,171 +1,129 @@
 @isTest
 public with sharing class BookReviewControllerTest {
-    // @isTest
-    // static void testAddReviewSuccess() {
-    //     Book__c testBook = new Book__c(Name = 'Test Book');
-    //     insert testBook;
+    static void setupTestData() {
+        Book__c testBook = new Book__c(Name = 'Test Book');
+        insert testBook;
 
-    //     Test.startTest();
-    //     Id reviewId = BookReviewController.addReview(
-    //         testBook.Id,
-    //         'Great Review',
-    //         Date.today(),
-    //         4,
-    //         'This is an example review text.'
-    //     );
-    //     Test.stopTest();
+        Book_Review__c review = new Book_Review__c(
+            Book__c = testBook.Id,
+            Rating__c = 5,
+            Review_text__c = 'Excellent Book',
+            Date_of_review__c = Date.today()
+        );
+        insert review;
+    }
 
-    //     System.assertNotEquals(null, reviewId, 'Review ID should not be null.');
+    @isTest
+    static void testAddReviewSuccess() {
+        setupTestData();
+        Book__c testBook = [SELECT Id FROM Book__c WHERE Name = 'Test Book' LIMIT 1];
 
-    //     Book_Review__c insertedReview = [SELECT Id, Name, Book__c, Date_of_review__c, Rating__c, Review_text__c 
-    //                                      FROM Book_Review__c 
-    //                                      WHERE Id = :reviewId];
-    //     System.assertEquals('Great Review', insertedReview.Name, 'Review Name should match.');
-    //     System.assertEquals(testBook.Id, insertedReview.Book__c, 'Book ID should match.');
-    //     System.assertEquals(4, insertedReview.Rating__c, 'Rating should match.');
-    //     System.assertEquals('This is an example review text.', insertedReview.Review_text__c, 'Review text should match.');
-    // }
+        Test.startTest();
+        Id reviewId = BookReviewController.addReview(
+            testBook.Id,
+            4,
+            'This is an example review text.'
+        );
+        Test.stopTest();
 
-    // @isTest
-    // static void testAddReviewMissingBookId() {
-    //     Boolean didThrowException = false;
+        System.assertNotEquals(null, reviewId, 'Review ID should not be null.');
 
-    //     try {
-    //         Test.startTest();
-    //         BookReviewController.addReview(
-    //             null,
-    //             'Review without Book',
-    //             Date.today(),
-    //             3,
-    //             'Review text'
-    //         );
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowException = true;
-    //     }
+        Book_Review__c insertedReview = [SELECT Id, Book__c, Rating__c, Review_text__c 
+                                         FROM Book_Review__c 
+                                         WHERE Id = :reviewId];
+        System.assertEquals(testBook.Id, insertedReview.Book__c, 'Book ID should match.');
+        System.assertEquals(4, insertedReview.Rating__c, 'Rating should match.');
+        System.assertEquals('This is an example review text.', insertedReview.Review_text__c, 'Review text should match.');
+    }
 
-    //     System.assert(didThrowException, 'Expected an exception to be thrown for missing Book ID.');
-    // }
+    @isTest
+    static void testAddReviewMissingBookId() {
+        Boolean didThrowException = false;
 
-    // @isTest
-    // static void testAddReviewMissingReviewName() {
-    //     Book__c testBook = new Book__c(Name = 'Test Book');
-    //     insert testBook;
+        Test.startTest();
+        try {
+            BookReviewController.addReview(null, 3, 'Review text');
+        } catch (AuraHandledException ex) {
+            didThrowException = true;
+        }
+        Test.stopTest();
 
-    //     Boolean didThrowException = false;
+        System.assert(didThrowException, 'Expected an exception to be thrown for missing Book ID.');
+    }
 
-    //     try {
-    //         Test.startTest();
-    //         BookReviewController.addReview(
-    //             testBook.Id,
-    //             '',
-    //             Date.today(),
-    //             3,
-    //             'Review text'
-    //         );
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowException = true;
-    //     }
+    @isTest
+    static void testAddReviewInvalidRating() {
+        setupTestData();
+        Book__c testBook = [SELECT Id FROM Book__c WHERE Name = 'Test Book' LIMIT 1];
+        Boolean didThrowException = false;
 
-    //     System.assert(didThrowException, 'Expected an exception to be thrown for missing Review Name.');
-    // }
+        Test.startTest();
+        try {
+            BookReviewController.addReview(testBook.Id, 6, 'Review text'); // Invalid rating above 5
+        } catch (AuraHandledException ex) {
+            didThrowException = true;
+        }
+        Test.stopTest();
 
-    // @isTest
-    // static void testAddReviewInvalidReviewNameLength() {
-    //     Book__c testBook = new Book__c(Name = 'Test Book');
-    //     insert testBook;
+        System.assert(didThrowException, 'Expected an exception to be thrown for invalid rating.');
+    }
 
-    //     Boolean didThrowException = false;
+    @isTest
+    static void testAddReviewTooLongReviewText() {
+        setupTestData();
+        Book__c testBook = [SELECT Id FROM Book__c WHERE Name = 'Test Book' LIMIT 1];
+        Boolean didThrowException = false;
 
-    //     try {
-    //         Test.startTest();
-    //         BookReviewController.addReview(
-    //             testBook.Id,
-    //             'This is a very long review name that exceeds the maximum allowed length of 80 characters for testing purposes.',
-    //             Date.today(),
-    //             3,
-    //             'Review text'
-    //         );
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowException = true;
-    //     }
+        String longReviewText = 'a'.repeat(3001); // Exceeds 3000 characters
 
-    //     System.assert(didThrowException, 'Expected an exception to be thrown for review name exceeding maximum length.');
-    // }
+        Test.startTest();
+        try {
+            BookReviewController.addReview(testBook.Id, 4, longReviewText);
+        } catch (AuraHandledException ex) {
+            didThrowException = true;
+        }
+        Test.stopTest();
 
-    // @isTest
-    // static void testAddReviewInvalidReviewTextLength() {
-    //     Book__c testBook = new Book__c(Name = 'Test Book');
-    //     insert testBook;
+        System.assert(didThrowException, 'Expected an exception to be thrown for review text exceeding maximum length.');
+    }
 
-    //     String longText = String.join(new List<String>(3006), 'a');
+    @isTest
+    static void testGetBookReviews() {
+        setupTestData();
+        Book__c testBook = [SELECT Id FROM Book__c WHERE Name = 'Test Book' LIMIT 1];
 
-    //     Boolean didThrowException = false;
+        Test.startTest();
+        List<Book_Review__c> reviews = BookReviewController.getBookReviews(testBook.Id);
+        Test.stopTest();
 
-    //     try {
-    //         Test.startTest();
-    //         BookReviewController.addReview(
-    //             testBook.Id,
-    //             'Valid Review Name',
-    //             Date.today(),
-    //             3,
-    //             longText
-    //         );
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowException = true;
-    //     }
+        System.assertEquals(1, reviews.size(), 'There should be one review.');
+        System.assertEquals('Excellent Book', reviews[0].Review_text__c, 'Review text should match.');
+    }
 
-    //     System.assert(didThrowException, 'Expected an exception to be thrown for review text exceeding maximum length.');
-    // }
+    @isTest
+    static void testUpdateReviewSuccess() {
+        setupTestData();
+        Book_Review__c testReview = [SELECT Id FROM Book_Review__c LIMIT 1];
 
-    // @isTest
-    // static void testAddReviewInvalidRating() {
-    //     Book__c testBook = new Book__c(Name = 'Test Book');
-    //     insert testBook;
+        Test.startTest();
+        BookReviewController.updateReview(testReview.Id, 4, 'Updated review text.');
+        Test.stopTest();
 
-    //     Boolean didThrowException = false;
+        Book_Review__c updatedReview = [SELECT Rating__c, Review_text__c FROM Book_Review__c WHERE Id = :testReview.Id];
+        System.assertEquals(4, updatedReview.Rating__c, 'Updated rating should match.');
+        System.assertEquals('Updated review text.', updatedReview.Review_text__c, 'Updated review text should match.');
+    }
 
-    //     try {
-    //         Test.startTest();
-    //         BookReviewController.addReview(
-    //             testBook.Id,
-    //             'Valid Review Name',
-    //             Date.today(),
-    //             6, // Invalid rating above 5
-    //             'Review text'
-    //         );
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowException = true;
-    //     }
+    @isTest
+    static void testDeleteReviewSuccess() {
+        setupTestData();
+        Book_Review__c testReview = [SELECT Id FROM Book_Review__c LIMIT 1];
 
-    //     System.assert(didThrowException, 'Expected an exception to be thrown for invalid rating.');
-    // }
+        Test.startTest();
+        BookReviewController.deleteReview(testReview.Id);
+        Test.stopTest();
 
-    // @isTest
-    // static void testAddReviewFutureDate() {
-    //     Book__c testBook = new Book__c(Name = 'Test Book');
-    //     insert testBook;
-
-    //     Boolean didThrowException = false;
-
-    //     try {
-    //         Test.startTest();
-    //         BookReviewController.addReview(
-    //             testBook.Id,
-    //             'Valid Review Name',
-    //             Date.today().addDays(1),
-    //             3,
-    //             'Review text'
-    //         );
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowException = true;
-    //     }
-
-    //     System.assert(didThrowException, 'Expected an exception to be thrown for date of review in the future.');
-    // }
+        List<Book_Review__c> deletedReviews = [SELECT Id FROM Book_Review__c WHERE Id = :testReview.Id];
+        System.assertEquals(0, deletedReviews.size(), 'Review should be deleted.');
+    }
 }

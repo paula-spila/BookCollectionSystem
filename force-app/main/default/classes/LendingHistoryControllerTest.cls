@@ -1,121 +1,111 @@
 @IsTest
 public class LendingHistoryControllerTest {
-    // @IsTest
-    // static void testCreateLendingSuccess() {
-    //     Book__c book = new Book__c(Name = 'Test Book');
-    //     insert book;
+    static BookInUserCollection__c setupTestData() {
+        BookInUserCollection__c bookCollection = new BookInUserCollection__c();
+        insert bookCollection;
 
-    //     Date lendingDate = Date.today().addDays(-1);
-    //     Date returnDate = Date.today();
-        
-    //     Test.startTest();
-    //     Id lendingId = LendingHistoryController.createLending(book.Id, 'Test Lending History', lendingDate, returnDate, 'Returned');
-    //     Test.stopTest();
-        
-    //     Lending_History__c lending = [SELECT Id, Name, Lending_date__c, Return_date__c, Return_status__c FROM Lending_History__c WHERE Id = :lendingId];
-    //     System.assertEquals('Test Lending History', lending.Name);
-    //     System.assertEquals(lendingDate, lending.Lending_date__c);
-    //     System.assertEquals(returnDate, lending.Return_date__c);
-    //     System.assertEquals('Returned', lending.Return_status__c);
-    // }
+        Lending_History__c lendingHistory = new Lending_History__c(
+            BookInUserCollection__c = bookCollection.Id,
+            Lender_name__c = 'John Doe',
+            Lending_date__c = Date.today().addDays(-10),
+            Return_status__c = 'Not Returned'
+        );
+        insert lendingHistory;
 
-    // @IsTest
-    // static void testCreateLendingMissingFields() {
-    //     Boolean didThrowExpectedException = false;
-        
-    //     try {
-    //         Test.startTest();
-    //         LendingHistoryController.createLending(null, null, Date.today(), Date.today().addDays(1), 'Returned');
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowExpectedException = true;
-    //     }
-        
-    //     System.assert(didThrowExpectedException, 'Expected an exception but none was thrown.');
-    // }
+        return bookCollection;
+    }
 
-    // @IsTest
-    // static void testCreateLendingFutureLendingDate() {
-    //     Book__c book = new Book__c(Name = 'Test Book');
-    //     insert book;
-        
-    //     Boolean didThrowExpectedException = false;
-        
-    //     try {
-    //         Test.startTest();
-    //         LendingHistoryController.createLending(book.Id, 'Test Lending History', Date.today().addDays(1), null, null);
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowExpectedException = true;
-    //     }
-        
-    //     System.assert(didThrowExpectedException, 'Expected an exception but none was thrown.');
-    // }
+    @IsTest
+    static void testGetLendingHistorySuccess() {
+        BookInUserCollection__c bookCollection = setupTestData();
 
-    // @IsTest
-    // static void testCreateLendingInvalidReturnDate() {
-    //     Book__c book = new Book__c(Name = 'Test Book');
-    //     insert book;
-        
-    //     Boolean didThrowExpectedException = false;
-        
-    //     try {
-    //         Test.startTest();
-    //         LendingHistoryController.createLending(book.Id, 'Test Lending History', Date.today(), Date.today().addDays(-1), 'Returned');
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowExpectedException = true;
-    //     }
-        
-    //     System.assert(didThrowExpectedException, 'Expected an exception but none was thrown.');
-    // }
+        Test.startTest();
+        List<Lending_History__c> lendingHistory = LendingHistoryController.getLendingHistory(bookCollection.Id);
+        Test.stopTest();
 
-    // @IsTest
-    // static void testCreateLendingMissingReturnStatus() {
-    //     Book__c book = new Book__c(Name = 'Test Book');
-    //     insert book;
-        
-    //     Boolean didThrowExpectedException = false;
-        
-    //     try {
-    //         Test.startTest();
-    //         LendingHistoryController.createLending(book.Id, 'Test Lending History', Date.today(), Date.today(), null);
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowExpectedException = true;
-    //     }
-        
-    //     System.assert(didThrowExpectedException, 'Expected an exception but none was thrown.');
-    // }
+        System.assertNotEquals(null, lendingHistory, 'Lending history should not be null.');
+        System.assertEquals(1, lendingHistory.size(), 'There should be one lending record.');
+        System.assertEquals('John Doe', lendingHistory[0].Lender_name__c, 'Lender name should match.');
+    }
 
-    // @IsTest
-    // static void testCreateLendingLongLendingHistoryName() {
-    //     Book__c book = new Book__c(Name = 'Test Book');
-    //     insert book;
-        
-    //     Boolean didThrowExpectedException = false;
-        
-    //     try {
-    //         Test.startTest();
-    //         LendingHistoryController.createLending(book.Id, 'Lending History Name Exceeding 80 Characters Is Not Valid And Should Trigger An Exception', Date.today(), null, null);
-    //         Test.stopTest();
-    //     } catch (Exception e) {
-    //         didThrowExpectedException = true;
-    //     }
-        
-    //     System.assert(didThrowExpectedException, 'Expected an exception but none was thrown.');
-    // }
+    @IsTest
+    static void testGetLendingHistoryMissingBookCollectionId() {
+        Boolean didThrowExpectedException = false;
 
-    // @IsTest
-    // static void testGetReturnStatusOptions() {
-    //     Test.startTest();
-    //     List<Map<String, String>> options = LendingHistoryController.getReturnStatusOptions();
-    //     Test.stopTest();
-        
-    //     System.assert(!options.isEmpty(), 'Expected return status options not to be empty.');
-    //     for (Map<String, String> option : options) {
-    //         System.assert(option.containsKey('label'), 'Option should contain a label.');
-    //         System.assert(option.containsKey('value'), 'Option should contain a value.');
-    //     }
-    // }
+        Test.startTest();
+        try {
+            LendingHistoryController.getLendingHistory(null);
+        } catch (AuraHandledException ex) {
+            didThrowExpectedException = true;
+        }
+        Test.stopTest();
+
+        System.assert(didThrowExpectedException, 'Expected an exception to be thrown for missing book collection ID.');
+    }
+
+    @IsTest
+    static void testCreateLendingSuccess() {
+        BookInUserCollection__c bookCollection = setupTestData();
+
+        Test.startTest();
+        LendingHistoryController.createLending(
+            bookCollection.Id,
+            'Jane Doe',
+            Date.today(),
+            'Not returned'
+        );
+        Test.stopTest();
+
+        Lending_History__c createdLending = [SELECT Id, Lender_name__c, Lending_date__c, Return_status__c
+                                             FROM Lending_History__c
+                                             WHERE Lender_name__c = 'Jane Doe' LIMIT 1];
+        System.assertNotEquals(null, createdLending, 'Lending record should have been created.');
+        System.assertEquals('Jane Doe', createdLending.Lender_name__c, 'Lender name should match.');
+        System.assertEquals(Date.today(), createdLending.Lending_date__c, 'Lending date should match.');
+        System.assertEquals('Not returned', createdLending.Return_status__c, 'Return status should match.');
+    }
+
+    @IsTest
+    static void testCreateLendingMissingFields() {
+        Boolean didThrowExpectedException = false;
+
+        Test.startTest();
+        try {
+            LendingHistoryController.createLending(null, null, null, null);
+        } catch (AuraHandledException ex) {
+            didThrowExpectedException = true;
+        }
+        Test.stopTest();
+
+        System.assert(didThrowExpectedException, 'Expected an exception to be thrown for missing required fields.');
+    }
+
+    @IsTest
+    static void testMarkAsReturnedSuccess() {
+        BookInUserCollection__c bookCollection = setupTestData();
+        Lending_History__c lendingRecord = [SELECT Id FROM Lending_History__c LIMIT 1];
+
+        Test.startTest();
+        LendingHistoryController.markAsReturned(lendingRecord.Id);
+        Test.stopTest();
+
+        Lending_History__c updatedLending = [SELECT Id, Return_status__c, Return_date__c FROM Lending_History__c WHERE Id = :lendingRecord.Id];
+        System.assertEquals('Returned', updatedLending.Return_status__c, 'Return status should be updated to "Returned".');
+        System.assertEquals(Date.today(), updatedLending.Return_date__c, 'Return date should be updated to today.');
+    }
+
+    @IsTest
+    static void testMarkAsReturnedMissingLendingId() {
+        Boolean didThrowExpectedException = false;
+
+        Test.startTest();
+        try {
+            LendingHistoryController.markAsReturned(null);
+        } catch (AuraHandledException ex) {
+            didThrowExpectedException = true;
+        }
+        Test.stopTest();
+
+        System.assert(didThrowExpectedException, 'Expected an exception to be thrown for missing lending record ID.');
+    }
 }

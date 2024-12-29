@@ -77,7 +77,7 @@ public with sharing class BookController {
         }
 
         if (!String.isBlank(description) && description.length() > 3000) {
-            throw new AuraHandledException('Apraksts nedrīkst pārsniegt 3000 rakstzīmes.');
+            throw new AuraHandledException('Description should not exceed 3000 characters.');
         }
     
         Book__c newBook = new Book__c(

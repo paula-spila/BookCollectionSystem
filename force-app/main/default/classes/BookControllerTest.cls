@@ -237,5 +237,235 @@ public with sharing class BookControllerTest {
         System.assertEquals('Test Book', createdBook.Name, 'Book name should match.');
         System.assertEquals('http://example.com/cover.jpg', createdBook.Book_Cover__c, 'Book cover URL should match.');
     }
+    
+    @isTest
+    static void testGetBookDetails() {
+        setupTestData();
+    
+        Book__c testBook = [SELECT Id FROM Book__c WHERE Name = 'Book One' LIMIT 1];
+    
+        Test.startTest();
+        Book__c fetchedBook = BookController.getBookDetails(testBook.Id);
+        Test.stopTest();
+    
+        System.assertNotEquals(null, fetchedBook, 'Fetched book should not be null.');
+        System.assertEquals(testBook.Id, fetchedBook.Id, 'Fetched book ID should match the inserted book ID.');
+        System.assertEquals('Book One', fetchedBook.Name, 'Book name should match.');
+        System.assertEquals(300, fetchedBook.Number_of_pages__c, 'Number of pages should match.');
+        System.assertEquals('Author One', fetchedBook.Author__r.Name, 'Author name should match.');
+        System.assertEquals('Science Fiction', fetchedBook.Genre__r.Name, 'Genre name should match.');
+    }
+    
+    @isTest
+    static void testGetBookDetails_Exception() {
+        Boolean exceptionThrown = false;
+        String exceptionMessage = '';
+    
+        Test.startTest();
+        try {
+            BookController.getBookDetails(null);
+        } catch (AuraHandledException ex) {
+            exceptionThrown = true;
+            exceptionMessage = ex.getMessage();
+        }
+        Test.stopTest();
+    
+        System.assert(exceptionThrown, 'Expected AuraHandledException was not thrown.');
+    }
+	
+    @isTest
+    static void testGetBooksByAuthor_Success() {
+        setupTestData();
+    
+        Author__c testAuthor = [SELECT Id FROM Author__c WHERE Name = 'Author One' LIMIT 1];
+        Book__c testBook = [SELECT Id FROM Book__c WHERE Name = 'Book One' LIMIT 1];
+    
+        Test.startTest();
+        List<Book__c> booksByAuthor = BookController.getBooksByAuthor(testAuthor.Id, testBook.Id);
+        Test.stopTest();
+    
+        System.assert(booksByAuthor != null, 'The result should not be null.');
+        System.assertEquals(0, booksByAuthor.size(), 'There should be no other books for this author excluding the current book.');
+    }
+    
+    @isTest
+    static void testGetBooksByAuthor_NoAuthorId() {
+        Boolean exceptionThrown = false;
+        String exceptionMessage = '';
+    
+        Test.startTest();
+        try {
+            BookController.getBooksByAuthor(null, null);
+        } catch (AuraHandledException ex) {
+            exceptionThrown = true;
+            exceptionMessage = ex.getMessage();
+        }
+        Test.stopTest();
+    
+        System.assert(exceptionThrown, 'Expected AuraHandledException was not thrown.');
+    }
+    
+    @isTest
+    static void testGetBooksByAuthor_NoResults() {
+        setupTestData();
+    
+        Author__c testAuthor = [SELECT Id FROM Author__c WHERE Name = 'Author Two' LIMIT 1];
+    
+        Test.startTest();
+        List<Book__c> booksByAuthor = BookController.getBooksByAuthor(testAuthor.Id, null);
+        Test.stopTest();
+    
+        System.assert(booksByAuthor != null, 'The result should not be null.');
+    }
+    @isTest
+    static void testUpdateBook_Success() {
+        setupTestData();
+    
+        Book__c bookToUpdate = [
+            SELECT Id, Name, Number_of_pages__c, Publication_date__c, Description__c, Book_cover__c
+            FROM Book__c
+            WHERE Name = 'Book One'
+            LIMIT 1
+        ];
+        bookToUpdate.Name = 'Updated Book Name';
+        bookToUpdate.Number_of_pages__c = 350;
+    
+        Test.startTest();
+        BookController.updateBook(bookToUpdate);
+        Test.stopTest();
+    
+        Book__c updatedBook = [
+            SELECT Id, Name, Number_of_pages__c
+            FROM Book__c
+            WHERE Id = :bookToUpdate.Id
+        ];
+        System.assertEquals('Updated Book Name', updatedBook.Name, 'The book name should be updated.');
+        System.assertEquals(350, updatedBook.Number_of_pages__c, 'The number of pages should be updated.');
+    }
+    
+    @isTest
+    static void testUpdateBook_NullBook() {
+        Boolean exceptionThrown = false;
+        String exceptionMessage = '';
+    
+        Test.startTest();
+        try {
+            BookController.updateBook(null);
+        } catch (AuraHandledException ex) {
+            exceptionThrown = true;
+            exceptionMessage = ex.getMessage();
+        }
+        Test.stopTest();
+    
+        System.assert(exceptionThrown, 'Expected AuraHandledException was not thrown.');
+    }
+    
+    @isTest
+    static void testUpdateBook_MissingName() {
+        setupTestData();
+    
+        Book__c bookToUpdate = [
+            SELECT Id, Name, Number_of_pages__c, Description__c, Book_cover__c
+            FROM Book__c
+            WHERE Name = 'Book One'
+            LIMIT 1
+        ];
+        bookToUpdate.Name = null;
+    
+        Boolean exceptionThrown = false;
+        String exceptionMessage = '';
+    
+        Test.startTest();
+        try {
+            BookController.updateBook(bookToUpdate);
+        } catch (AuraHandledException ex) {
+            exceptionThrown = true;
+            exceptionMessage = ex.getMessage();
+        }
+        Test.stopTest();
+    
+        System.assert(exceptionThrown, 'Expected AuraHandledException was not thrown.');
+    }
+    
+    @isTest
+    static void testUpdateBook_NegativePages() {
+        setupTestData();
+    
+        Book__c bookToUpdate = [
+            SELECT Id, Name, Number_of_pages__c
+            FROM Book__c
+            WHERE Name = 'Book One'
+            LIMIT 1
+        ];
+        bookToUpdate.Number_of_pages__c = -50;
+    
+        Boolean exceptionThrown = false;
+        String exceptionMessage = '';
+    
+        Test.startTest();
+        try {
+            BookController.updateBook(bookToUpdate);
+        } catch (AuraHandledException ex) {
+            exceptionThrown = true;
+            exceptionMessage = ex.getMessage();
+        }
+        Test.stopTest();
+    
+        System.assert(exceptionThrown, 'Expected AuraHandledException was not thrown.');
+    }
+    
+    @isTest
+    static void testUpdateBook_FuturePublicationDate() {
+        setupTestData();
+    
+        Book__c bookToUpdate = [
+            SELECT Id, Name, Publication_date__c, Number_of_pages__c
+            FROM Book__c
+            WHERE Name = 'Book One'
+            LIMIT 1
+        ];
+        bookToUpdate.Publication_date__c = Date.today().addDays(10);
+    
+        Boolean exceptionThrown = false;
+        String exceptionMessage = '';
+    
+        Test.startTest();
+        try {
+            BookController.updateBook(bookToUpdate);
+        } catch (AuraHandledException ex) {
+            exceptionThrown = true;
+            exceptionMessage = ex.getMessage();
+        }
+        Test.stopTest();
+    
+        System.assert(exceptionThrown, 'Expected AuraHandledException was not thrown.');
+    }
+    
+    @isTest
+    static void testUpdateBook_DescriptionTooLong() {
+        setupTestData();
+    
+        Book__c bookToUpdate = [
+            SELECT Id, Name, Description__c, Number_of_pages__c, Publication_date__c, Book_cover__c
+            FROM Book__c
+            WHERE Name = 'Book One'
+            LIMIT 1
+        ];
+        bookToUpdate.Description__c = String.join(new List<String>(5001), 'a');
+    
+        Boolean exceptionThrown = false;
+        String exceptionMessage = '';
+    
+        Test.startTest();
+        try {
+            BookController.updateBook(bookToUpdate);
+        } catch (AuraHandledException ex) {
+            exceptionThrown = true;
+            exceptionMessage = ex.getMessage();
+        }
+        Test.stopTest();
+    
+        System.assert(exceptionThrown, 'Expected AuraHandledException was not thrown.');
+    }
 
 }
